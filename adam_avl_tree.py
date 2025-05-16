@@ -36,7 +36,7 @@ class AVLNode(object):
 
 
 """
-A class implementing an AVL tree.
+A class implementing an AVL tree.its
 """
 
 class AVLTree(object):
