@@ -23,12 +23,13 @@ def trepr(t, bykey=False):
     if t is None:
         return ["#"]
 
-    # Show key, balance factor, and zero_balance_count in compact form
-    if hasattr(t, 'key') and hasattr(t, 'balance_factor') and hasattr(t, 'zero_balance_count'):
+    # Show key, balance factor, zero_balance_count, and height in compact form
+    if hasattr(t, 'key') and hasattr(t, 'balance_factor') and hasattr(t, 'zero_balance_count') and hasattr(t, 'height'):
         val = str(t.key) if bykey else str(getattr(t, 'value', getattr(t, 'val', t)))
         bf = t.balance_factor() if callable(t.balance_factor) else t.balance_factor
         zbf = t.zero_balance_count
-        thistr = f"{val},({bf}),[{zbf}]"
+        h = t.height
+        thistr = f"{val},({bf}),[{zbf}]{{{h}}}"
     else:
         thistr = str(getattr(t, 'key', t)) if bykey else str(getattr(t, 'val', t))
 
