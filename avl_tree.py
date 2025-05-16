@@ -33,6 +33,16 @@ class AVLNode(object):
     def is_real_node(self):
         return self.key is not None
 
+    """Returns the height of a node, or -1 if the node is not real.
+
+    @rtype: int
+    @returns: height of the node if real, -1 otherwise
+    """
+    def get_height(self):
+        if self is None or not self.is_real_node():
+            return -1
+        return self.height
+
 
 
 """
@@ -50,18 +60,6 @@ class AVLTree(object):
         self.node_count = 0
 
 
-    """Returns the height of a node, or -1 if the node is not real.
-
-    @type node: AVLNode
-    @rtype: int
-    @returns: height of the node if real, -1 otherwise
-    """
-    def height(self, node):
-        if node is None or not node.is_real_node():
-            return -1
-        return node.height
-
-
     """Updates the height of a given node based on its children.
 
     @type node: AVLNode
@@ -70,7 +68,7 @@ class AVLTree(object):
     @rtype: None
     """
     def update_height(self, node):
-        node.height = 1 + max(self.height(node.left), self.height(node.right))
+        node.height = 1 + max(node.left.get_height() if node.left else -1, node.right.get_height() if node.right else -1)
 
 
     """Computes the balance factor of a given node.
@@ -80,7 +78,7 @@ class AVLTree(object):
     @returns: height(left child) - height(right child)
     """
     def balance_factor(self, node):
-        return self.height(node.left) - self.height(node.right)
+        return (node.left.get_height() if node.left else -1) - (node.right.get_height() if node.right else -1)
 
 
     """Performs a left rotation on the given node.
