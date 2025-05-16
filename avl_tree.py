@@ -393,3 +393,8 @@ class AVLTree(object):
         while node:
             node.update_stats()
             node = node.parent
+
+    
+
+    def _get_balance(self, node):
+        return node.get_bf()
