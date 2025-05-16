@@ -1,4 +1,4 @@
-from adam_avl_tree import AVLTree
+from avl_tree import AVLTree
 from printree import printree
 
 if __name__ == "__main__":
