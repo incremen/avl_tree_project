@@ -17,12 +17,12 @@ class AVLNode(object):
     @param value: data of your node
     """
     def __init__(self, key, value):
-        self.key = key
+        self.key :int = key
         self.value = value
-        self.left = None
-        self.right = None
-        self.parent = None
-        self.height = -1
+        self.left :AVLNode= None
+        self.right :AVLNode= None
+        self.parent :AVLNode= None
+        self.height :int = -1
 		
 
     """returns whether self is not a virtual node 
