@@ -3,23 +3,28 @@
 ## Written by a former student in the course - thanks to Amitai Cohen
 ## No need to fully understand this code
 
-def printree(t, bykey=True):
+def printree(t, bykey=True, file=None):
     """Print a textual representation of t
-    bykey=True: show keys instead of values, and also show balance factor"""
-    for row in trepr(t, bykey):
+    bykey=True: show keys instead of values, and also show balance factor
+    file: if provided, also write output to this file object"""
+    rows = trepr(t, bykey)
+    for row in rows:
         print(row)
+        if file:
+            print(row, file=file)
 
 def trepr(t, bykey=False):
     """Return a list of textual representations of the levels in t
-    bykey=True: show keys instead of values, and also show balance factor"""
+    bykey=True: show keys instead of values, and also show balance factor and zero_balance_count"""
     if t is None:
         return ["#"]
 
-    # Show value/key and balance factor
-    if hasattr(t, 'key') and hasattr(t, 'balance_factor'):
+    # Show key, balance factor, and zero_balance_count in compact form
+    if hasattr(t, 'key') and hasattr(t, 'balance_factor') and hasattr(t, 'zero_balance_count'):
         val = str(t.key) if bykey else str(getattr(t, 'value', getattr(t, 'val', t)))
         bf = t.balance_factor() if callable(t.balance_factor) else t.balance_factor
-        thistr = f"{val},({bf})"
+        zbf = t.zero_balance_count
+        thistr = f"{val},({bf}),[{zbf}]"
     else:
         thistr = str(getattr(t, 'key', t)) if bykey else str(getattr(t, 'val', t))
 

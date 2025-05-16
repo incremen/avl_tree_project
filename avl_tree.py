@@ -305,6 +305,7 @@ class AVLTree(object):
             parent.left = new_node
         else:
             parent.right = new_node
+        new_node.update_stats()  # Ensure the new node's stats are set
         self.update_upwards(parent)
         self.node_count += 1
         return self.rebalance(parent)
