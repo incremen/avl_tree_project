@@ -48,6 +48,9 @@ class AVLNode(object):
         left_height = self.left.get_height() if self.left else -1
         right_height = self.right.get_height() if self.right else -1
         return left_height - right_height
+    
+    def balance_factor(self):
+        return self.get_bf()
 
     """Update height and zero_balance_count for this node."""
     def update_stats(self):
