@@ -333,11 +333,15 @@ class AVLTree(object):
             if successor.parent != node:
                 self.transplant(successor, successor.right)
                 successor.right = node.right
-                successor.right.parent = successor
+                if successor.right:
+                    successor.right.parent = successor
+                rebalance_start = successor.parent  # Start from successor's parent
+            else:
+                rebalance_start = successor  # Successor is direct child
             self.transplant(node, successor)
             successor.left = node.left
-            successor.left.parent = successor
-            rebalance_start = successor
+            if successor.left:
+                successor.left.parent = successor
         node.left = None
         node.right = None
         node.parent = None
