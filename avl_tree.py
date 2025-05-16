@@ -23,6 +23,7 @@ class AVLNode(object):
         self.right :AVLNode= None
         self.parent :AVLNode= None
         self.height :int = -1
+        self.zero_balance_count :int = 0
 		
 
     """returns whether self is not a virtual node 
@@ -43,6 +44,19 @@ class AVLNode(object):
             return -1
         return self.height
 
+    def balance_factor(self):
+        left_height = self.left.get_height() if self.left else -1
+        right_height = self.right.get_height() if self.right else -1
+        return left_height - right_height
+
+    """Update height and zero_balance_count for this node."""
+    def update_stats(self):
+        left_height = self.left.get_height() if self.left else -1
+        right_height = self.right.get_height() if self.right else -1
+        self.height = 1 + max(left_height, right_height)
+        left_zb = self.left.zero_balance_count if self.left and self.left.is_real_node() else 0
+        right_zb = self.right.zero_balance_count if self.right and self.right.is_real_node() else 0
+        self.zero_balance_count = left_zb + right_zb + (1 if self.balance_factor() == 0 else 0)
 
 
 """
@@ -77,7 +91,7 @@ class AVLTree(object):
     @rtype: int
     @returns: height(left child) - height(right child)
     """
-    def balance_factor(self, node):
+    def get_bf(self, node):
         return (node.left.get_height() if node.left else -1) - (node.right.get_height() if node.right else -1)
 
 
@@ -102,8 +116,9 @@ class AVLTree(object):
             new_root.parent.left = new_root
         else:
             new_root.parent.right = new_root
-        self.update_height(node)
-        self.update_height(new_root)
+        node.update_stats()
+        new_root.update_stats()
+        self.update_upwards(new_root.parent)
         return new_root
 
 
@@ -128,8 +143,9 @@ class AVLTree(object):
             new_root.parent.right = new_root
         else:
             new_root.parent.left = new_root
-        self.update_height(node)
-        self.update_height(new_root)
+        node.update_stats()
+        new_root.update_stats()
+        self.update_upwards(new_root.parent)
         return new_root
 
 
@@ -143,16 +159,16 @@ class AVLTree(object):
     def rebalance(self, node):
         rotations = 0
         while node:
-            self.update_height(node)
-            bf = self.balance_factor(node)
+            node.update_stats()
+            bf = node.balance_factor()
             if bf > 1:
-                if self.balance_factor(node.left) < 0:
+                if node.left.balance_factor() < 0:
                     node.left = self.rotate_left(node.left)
                     rotations += 1
                 node = self.rotate_right(node)
                 rotations += 1
             elif bf < -1:
-                if self.balance_factor(node.right) > 0:
+                if node.right.balance_factor() > 0:
                     node.right = self.rotate_right(node.right)
                     rotations += 1
                 node = self.rotate_left(node)
@@ -225,7 +241,7 @@ class AVLTree(object):
             return 0
         left = self.count_zero_balance_nodes(node.left)
         right = self.count_zero_balance_nodes(node.right)
-        bf = self.balance_factor(node)
+        bf = self.get_bf(node)
         return left + right + (1 if bf == 0 else 0)
 
     
@@ -289,6 +305,7 @@ class AVLTree(object):
             parent.left = new_node
         else:
             parent.right = new_node
+        self.update_upwards(parent)
         self.node_count += 1
         return self.rebalance(parent)
 
@@ -320,6 +337,7 @@ class AVLTree(object):
         node.left = None
         node.right = None
         node.parent = None
+        self.update_upwards(rebalance_start)
         self.node_count -= 1
         return self.rebalance(rebalance_start)
 
@@ -360,5 +378,10 @@ class AVLTree(object):
     def get_amir_balance_factor(self):
         if self.node_count == 0:
             return 0.0  
-        count = self.count_zero_balance_nodes(self.root)
-        return count / self.node_count
+        return self.root.zero_balance_count / self.node_count
+
+    def update_upwards(self, node):
+        """Update height and zero_balance_count from node up to root."""
+        while node:
+            node.update_stats()
+            node = node.parent

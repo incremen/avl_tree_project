@@ -23,6 +23,7 @@ class AVLNode(object):
 		self.right = None
 		self.parent = None
 		self.height = -1
+		self.zero_balance_count = 0  # Number of nodes in subtree with balance factor 0
 		
 
 	"""returns whether self is not a virtual node 
@@ -31,7 +32,26 @@ class AVLNode(object):
 	@returns: False if self is a virtual node, True otherwise.
 	"""
 	def is_real_node(self):
-		return False
+		return self.key is not None
+
+	def get_height(self):
+		if not self.is_real_node():
+			return -1
+		return self.height
+
+	def balance_factor(self):
+		left_height = self.left.get_height() if self.left else -1
+		right_height = self.right.get_height() if self.right else -1
+		return left_height - right_height
+
+	def update_stats(self):
+		"""Update height and zero_balance_count for this node."""
+		left_height = self.left.get_height() if self.left else -1
+		right_height = self.right.get_height() if self.right else -1
+		self.height = 1 + max(left_height, right_height)
+		left_zb = self.left.zero_balance_count if self.left and self.left.is_real_node() else 0
+		right_zb = self.right.zero_balance_count if self.right and self.right.is_real_node() else 0
+		self.zero_balance_count = left_zb + right_zb + (1 if self.balance_factor() == 0 else 0)
 
 
 
@@ -72,7 +92,29 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def insert(self, key, val, start="root"):
-		return -1
+		# Find the correct parent for the new node
+		parent = None
+		current = self.root
+		while current:
+			parent = current
+			if key < current.key:
+				if current.left is None:
+					break
+				current = current.left
+			else:
+				if current.right is None:
+					break
+				current = current.right
+		new_node = AVLNode(key, val)
+		new_node.parent = parent
+		if parent is None:
+			self.root = new_node
+		elif key < parent.key:
+			parent.left = new_node
+		else:
+			parent.right = new_node
+		self.update_upwards(parent)
+		return 0  # or the number of rebalancing operations if you implement AVL balancing
 
 
 	"""deletes node from the dictionary
@@ -83,7 +125,30 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def delete(self, node):
-		return -1
+		if node is None:
+			return 0
+		if node.left is None:
+			self._transplant(node, node.right)
+			rebalance_start = node.parent
+		elif node.right is None:
+			self._transplant(node, node.left)
+			rebalance_start = node.parent
+		else:
+			successor = node.right
+			while successor.left:
+				successor = successor.left
+			if successor.parent != node:
+				self._transplant(successor, successor.right)
+				successor.right = node.right
+				if successor.right:
+					successor.right.parent = successor
+			self._transplant(node, successor)
+			successor.left = node.left
+			if successor.left:
+				successor.left.parent = successor
+			rebalance_start = successor
+		self.update_upwards(rebalance_start)
+		return 0  # or the number of rebalancing operations if you implement AVL balancing
 
 
 	"""returns an array representing dictionary 
@@ -119,3 +184,19 @@ class AVLTree(object):
 	"""
 	def get_amir_balance_factor(self):
 		return None
+
+	def update_upwards(self, node):
+		"""Update height and zero_balance_count from node up to root."""
+		while node:
+			node.update_stats()
+			node = node.parent
+
+	def _transplant(self, u, v):
+		if u.parent is None:
+			self.root = v
+		elif u == u.parent.left:
+			u.parent.left = v
+		else:
+			u.parent.right = v
+		if v:
+			v.parent = u.parent

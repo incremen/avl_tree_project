@@ -5,18 +5,23 @@
 
 def printree(t, bykey=True):
     """Print a textual representation of t
-    bykey=True: show keys instead of values"""
+    bykey=True: show keys instead of values, and also show balance factor"""
     for row in trepr(t, bykey):
         print(row)
 
 def trepr(t, bykey=False):
     """Return a list of textual representations of the levels in t
-    bykey=True: show keys instead of values"""
+    bykey=True: show keys instead of values, and also show balance factor"""
     if t is None:
         return ["#"]
 
-    # Support both .key/.val or just the node itself
-    thistr = str(getattr(t, 'key', t)) if bykey else str(getattr(t, 'val', t))
+    # Show value/key and balance factor
+    if hasattr(t, 'key') and hasattr(t, 'balance_factor'):
+        val = str(t.key) if bykey else str(getattr(t, 'value', getattr(t, 'val', t)))
+        bf = t.balance_factor() if callable(t.balance_factor) else t.balance_factor
+        thistr = f"{val},({bf})"
+    else:
+        thistr = str(getattr(t, 'key', t)) if bykey else str(getattr(t, 'val', t))
 
     return conc(trepr(getattr(t, 'left', None), bykey), thistr, trepr(getattr(t, 'right', None), bykey))
 
