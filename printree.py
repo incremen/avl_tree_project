@@ -3,17 +3,19 @@
 ## Written by a former student in the course - thanks to Amitai Cohen
 ## No need to fully understand this code
 
-def printree(t, bykey=True, file=None):
+def printree(t, file=None, bykey=True):
     """Print a textual representation of t
     bykey=True: show keys instead of values, and also show balance factor
-    file: if provided, also write output to this file object (file is always cleared first)"""
+    file: if provided (as a filename), write output to this file (file is always cleared first)"""
     rows = trepr(t, bykey)
     if file:
-        open(file.name, 'w').close()  # Always clear the file before writing
-    for row in rows:
-        print(row)
-        if file:
-            print(row, file=file)
+        with open(file, 'w') as f:
+            for row in rows:
+                print(row)
+                print(row, file=f)
+    else:
+        for row in rows:
+            print(row)
 
 def trepr(t, bykey=False):
     """Return a list of textual representations of the levels in t
