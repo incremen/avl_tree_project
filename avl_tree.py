@@ -44,7 +44,7 @@ class AVLNode(object):
             return -1
         return self.height
 
-    def balance_factor(self):
+    def get_bf(self):
         left_height = self.left.get_height() if self.left else -1
         right_height = self.right.get_height() if self.right else -1
         return left_height - right_height
@@ -56,7 +56,7 @@ class AVLNode(object):
         self.height = 1 + max(left_height, right_height)
         left_zb = self.left.zero_balance_count if self.left and self.left.is_real_node() else 0
         right_zb = self.right.zero_balance_count if self.right and self.right.is_real_node() else 0
-        self.zero_balance_count = left_zb + right_zb + (1 if self.balance_factor() == 0 else 0)
+        self.zero_balance_count = left_zb + right_zb + (1 if self.get_bf() == 0 else 0)
 
 
 """
