@@ -6,8 +6,10 @@
 def printree(t, bykey=True, file=None):
     """Print a textual representation of t
     bykey=True: show keys instead of values, and also show balance factor
-    file: if provided, also write output to this file object"""
+    file: if provided, also write output to this file object (file is always cleared first)"""
     rows = trepr(t, bykey)
+    if file:
+        open(file.name, 'w').close()  # Always clear the file before writing
     for row in rows:
         print(row)
         if file:
