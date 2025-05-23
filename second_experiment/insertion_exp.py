@@ -1,9 +1,9 @@
 import time
 import sys
 import os
+import concurrent.futures
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from avl_tree import AVLTree
-from bst import BSTree
+
 import matplotlib.pyplot as plt
 
     
@@ -23,36 +23,46 @@ def time_insertion(tree_class, start_mode, data):
     t1 = time.time()
     return t1 - t0
 
-def run_all_experiments(sizes, repeats=5):
-    results = []
+def run_scenario(args):
+    tree_type, start_mode, data, n, repeats = args
+    total_time = 0
+    for _ in range(repeats):
+        if tree_type == "BST":
+            from bst import BSTree
+            total_time += time_insertion(BSTree, start_mode, data)
+        else:
+            from avl_tree import AVLTree
+            total_time += time_insertion(AVLTree, start_mode, data)
+    avg_time = total_time / repeats
+    return (tree_type, start_mode, "sorted" if data == list(range(n)) else "reversed", n, avg_time)
 
+
+def run_all_experiments(sizes, repeats=5):
+    scenarios = [("BST", "root"), ("BST", "max"), ("AVL", "root"), ("AVL", "max")]
+    tasks = []
     for n in sizes:
         sorted_data = generate_sorted(n)
         reversed_data = generate_reversed(n)
+        for tree_type, start_mode in scenarios:
+            tasks.append((tree_type, start_mode, sorted_data, n, repeats))
+            tasks.append((tree_type, start_mode, reversed_data, n, repeats))
+    results = []
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        for res in executor.map(run_scenario, tasks):
+            results.append(res)
+    return results
 
-        scenarios = [
-            ("BST", "root", sorted_data),
-            ("BST", "root", reversed_data),
-            ("BST", "max", sorted_data),
-            ("BST", "max", reversed_data),
-            ("AVL", "root", sorted_data),
-            ("AVL", "root", reversed_data),
-            ("AVL", "max", sorted_data),
-            ("AVL", "max", reversed_data),
-        ]
-
-        print(f"\n--- Size n = {n} ---")
-        for tree_type, start_mode, data in scenarios:
-            total_time = 0
-            for _ in range(repeats):
-                if tree_type == "BST":
-                    total_time += time_insertion(BSTree, start_mode, data)
-                else:
-                    total_time += time_insertion(AVLTree, start_mode, data)
-            avg_time = total_time / repeats
-            results.append((tree_type, start_mode, "sorted" if data == sorted_data else "reversed", n, avg_time))
-            print(f"{tree_type} Tree, Start = {start_mode}, Input = {'sorted' if data == sorted_data else 'reversed'} → {avg_time:.6f} seconds")
-
+def run_sorted_experiments(sizes, repeats=5):
+    scenarios = [("BST", "root"), ("BST", "max"), ("AVL", "root"), ("AVL", "max")]
+    tasks = []
+    for n in sizes:
+        sorted_data = generate_sorted(n)
+        for tree_type, start_mode in scenarios:
+            tasks.append((tree_type, start_mode, sorted_data, n, repeats))
+    results = []
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        for res in executor.map(run_scenario, tasks):
+            results.append(res)
     return results
 
 def plot_results(results, folder):
@@ -82,6 +92,12 @@ def plot_results(results, folder):
     plot_scenario(sorted_results, 'sorted')
     plot_scenario(reversed_results, 'reversed')
 
-sizes_to_test = [10,50, 100, 500, 1000, 5000]
-results = run_all_experiments(sizes_to_test)
-plot_results(results, os.path.dirname(__file__))
+if __name__ == "__main__":
+    import time
+    sizes_to_test = [10, 50, 100, 200, 500, 1000, 2000, 4000, 8000, 12000, 14000]
+    start_time = time.time()
+    results = run_all_experiments(sizes_to_test)
+    # results = run_sorted_experiments(sizes_to_test)
+    plot_results(results, os.path.dirname(__file__))
+    end_time = time.time()
+    print(f"\nTotal experiment time: {end_time - start_time:.2f} seconds")
