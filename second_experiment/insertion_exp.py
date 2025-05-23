@@ -2,11 +2,14 @@ import time
 import sys
 import os
 import concurrent.futures
+import matplotlib.pyplot as plt
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import matplotlib.pyplot as plt
+from bst import BSTree
+from avl_tree import AVLTree
 
-    
+
+
 def generate_sorted(n):
     return list(range(n))
 
@@ -28,10 +31,8 @@ def run_scenario(args):
     total_time = 0
     for _ in range(repeats):
         if tree_type == "BST":
-            from bst import BSTree
             total_time += time_insertion(BSTree, start_mode, data)
         else:
-            from avl_tree import AVLTree
             total_time += time_insertion(AVLTree, start_mode, data)
     avg_time = total_time / repeats
     return (tree_type, start_mode, "sorted" if data == list(range(n)) else "reversed", n, avg_time)

@@ -75,6 +75,7 @@ class AVLTree(object):
     def __init__(self):
         self.root = None
         self.node_count = 0
+        self.max_node = None  # Maintain a pointer to the maximum node
 
 
     """Updates the height of a given node based on its children.
@@ -282,10 +283,13 @@ class AVLTree(object):
         if self.root is None:
             self.root = AVLNode(key, val)
             self.root.height = 0
+            self.max_node = self.root  # Set max_node to root
             self.node_count += 1
             return 0
         if start == "root":
             current = self.root
+        elif start == "max":
+            current = self.max_node  # Use the max_node pointer
         else:
             current = self.root
             while current.right and current.right.is_real_node():
@@ -308,6 +312,9 @@ class AVLTree(object):
             parent.left = new_node
         else:
             parent.right = new_node
+        # Update max_node if needed
+        if self.max_node is None or key > self.max_node.key:
+            self.max_node = new_node
         new_node.update_stats()  # Ensure the new node's stats are set
         self.update_upwards(parent)
         self.node_count += 1
@@ -345,6 +352,18 @@ class AVLTree(object):
         node.left = None
         node.right = None
         node.parent = None
+        # Update max_node if needed
+        if self.max_node == node:
+            # Find new max_node (rightmost node)
+            curr = self.root
+            prev = None
+            while curr and curr.is_real_node() and curr.right:
+                prev = curr
+                curr = curr.right
+            if curr and curr.is_real_node():
+                self.max_node = curr
+            else:
+                self.max_node = prev
         self.update_upwards(rebalance_start)
         self.node_count -= 1
         return self.rebalance(rebalance_start)
