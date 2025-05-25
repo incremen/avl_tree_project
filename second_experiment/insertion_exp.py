@@ -95,10 +95,10 @@ def plot_results(results, folder):
 
 if __name__ == "__main__":
     import time
-    sizes_to_test = [10, 50, 100, 200, 500, 1000, 2000, 4000, 8000, 12000, 14000]
+    sizes_to_test = [10, 50, 100, 200, 500, 1000, 2000,5000,7000, 9000, 12_000]
     start_time = time.time()
-    results = run_all_experiments(sizes_to_test)
-    # results = run_sorted_experiments(sizes_to_test)
+    # results = run_all_experiments(sizes_to_test)
+    results = run_sorted_experiments(sizes_to_test)
     plot_results(results, os.path.dirname(__file__))
     end_time = time.time()
-    print(f"\nTotal experiment time: {end_time - start_time:.2f} seconds")
+    print(f"\nTotal experiment time: {end_time - start_time:.2f} seconds")  
