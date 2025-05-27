@@ -1,6 +1,9 @@
 import traceback
 import unittest
 import random
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # 🔧 Update this import to match the actual location / name of your AVL implementation
 from avl_tree import AVLTree  # noqa: F401 – replace 'avl' with your module name if different
