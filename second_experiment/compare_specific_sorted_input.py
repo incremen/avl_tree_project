@@ -47,7 +47,7 @@ def plot_results(results, folder):
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    out_path = os.path.join(folder, 'insertion_time_comparison_sorted.png')
+    out_path = os.path.join(folder, 'specific_sorted_input_results.png')
     plt.savefig(out_path)
     plt.close()
     print(f"Saved graph: {out_path}")
