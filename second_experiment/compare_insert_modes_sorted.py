@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from bst import BSTree
-from new_avl_tree_with_fixed_delete import AVLTree
+from avl_tree import AVLTree
 
 def generate_sorted(n):
     return list(range(n))
