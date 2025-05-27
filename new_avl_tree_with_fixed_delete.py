@@ -394,6 +394,7 @@ class AVLTree(object):
     def rebalance(self, node):
         rotations = 0
         while node:
+            old_height = node.height
             node.update_stats()
             bf = node.balance_factor()
             if bf > 1:
@@ -408,6 +409,11 @@ class AVLTree(object):
                     rotations += 1
                 node = self.rotate_left(node)
                 rotations += 1
+
+            # If height hasn't changed after rebalancing, we can stop
+            if node.height == old_height:
+                break
+                
             if node.parent is None:
                 self.root = node
             node = node.parent
