@@ -142,7 +142,7 @@ class TestAVLTree(unittest.TestCase):
         for k in keys:
             self.last_op = f"insert({k},{k})"
             self._record_state()
-            reb = self.tree.insert(k, str(k))
+            reb = self.tree.insert(k, str(k), "max")
             self.assertIsInstance(reb, int)
             self.assertGreaterEqual(reb, 0)
 

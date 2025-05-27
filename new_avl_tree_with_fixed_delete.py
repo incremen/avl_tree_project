@@ -273,7 +273,7 @@ class AVLTree(object):
                 node = node.left
             else:
                 node = node.right
-        return None
+        return node
 
 
     """inserts a new node into the dictionary with corresponding key and value
@@ -288,21 +288,36 @@ class AVLTree(object):
     @returns: the number of rebalancing operation due to AVL rebalancing
     """
     def insert(self, key, val, start="root"):
+        """Inserts a new node into the dictionary with corresponding key and value.
+
+        @type key: int
+        @pre: key currently does not appear in the dictionary
+        @param key: key of item that is to be inserted to self
+        @type val: string
+        @param val: the value of the item
+        @param start: can be either "root" or "max"
+        @rtype: int
+        @returns: the number of rebalancing operations due to AVL rebalancing
+        """
         if self.root is None:
             self.root = AVLNode(key, val)
             self.root.height = 0
             self.max_node = self.root  # Set max_node to root
             self.node_count += 1
             return 0
-        if start == "root":
-            current = self.root
-        elif start == "max":
-            current = self.max_node  # Use the max_node pointer
-        else:
-            current = self.root
-            while current.right and current.right.is_real_node():
-                current = current.right
+
+        # Determine the starting node
+        current = self.root if start == "root" else self.max_node
         parent = None
+
+        # If starting from max_node, traverse upwards until the key fits in the current subtree
+        if start == "max":
+            while current and not (key < current.key and current.left or key > current.key and current.right):
+                current = current.parent
+            if current is None:
+                current = self.root
+
+        # Traverse down to find the correct parent
         while current:
             parent = current
             if key < current.key:
@@ -313,6 +328,12 @@ class AVLTree(object):
                 if current.right is None or not current.right.is_real_node():
                     break
                 current = current.right
+
+        # If parent is still None, something went wrong; default to root
+        if parent is None:
+            parent = self.root
+
+        # Create and attach the new node
         new_node = AVLNode(key, val)
         new_node.height = 0
         new_node.parent = parent
@@ -320,10 +341,12 @@ class AVLTree(object):
             parent.left = new_node
         else:
             parent.right = new_node
+
         # Update max_node if needed
         if self.max_node is None or key > self.max_node.key:
             self.max_node = new_node
-        new_node.update_stats()  # Ensure the new node's stats are set
+
+        new_node.update_stats()
         self.update_upwards(parent)
         self.node_count += 1
         return self.rebalance(parent)
@@ -472,3 +495,56 @@ class AVLTree(object):
         @returns: the node with the maximum key, None if the tree is empty
         """
         return self.max_node
+    
+    def insert_from_max(self, key, val):
+        """Insert starting from max_node, traversing up and then down as needed."""
+        node = self.max_node
+        # If key is greater than max_node, insert as right child
+        if key > node.key:
+            new_node = AVLNode(key, val)
+            new_node.height = 0
+            new_node.parent = node
+            node.right = new_node
+            self.max_node = new_node
+            new_node.update_stats()
+            self.update_upwards(node)
+            self.node_count += 1
+            return self.rebalance(node)
+        # Traverse up until we find a node where key < node.key or reach root
+        up = node
+        while up.parent and key < up.key:
+            up = up.parent
+        # Now, either up is the root or the lowest ancestor where key >= up.key
+        # Start BST search from up (or its left child if key < up.key)
+        if key < up.key:
+            start = up.left
+            parent = up
+        else:
+            start = up
+            parent = None
+        current = start
+        while current:
+            parent = current
+            if key < current.key:
+                if current.left is None or not current.left.is_real_node():
+                    break
+                current = current.left
+            else:
+                if current.right is None or not current.right.is_real_node():
+                    break
+                current = current.right
+        new_node = AVLNode(key, val)
+        new_node.height = 0
+        new_node.parent = parent
+        if parent is None:
+            self.root = new_node
+        elif key < parent.key:
+            parent.left = new_node
+        else:
+            parent.right = new_node
+        if self.max_node is None or key > self.max_node.key:
+            self.max_node = new_node
+        new_node.update_stats()
+        self.update_upwards(parent)
+        self.node_count += 1
+        return self.rebalance(parent)
