@@ -7,7 +7,7 @@ def test_random_tree():
     keys = list(range(60))
     random.shuffle(keys)
     for key in keys:
-        tree.insert(key, str(key))
+        tree.insert(key, str(key), "max")
 
 
     printree(tree.root, file = "tree_output.txt", )
