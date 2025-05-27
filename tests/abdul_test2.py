@@ -2,7 +2,8 @@ import unittest
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from avl_tree import AVLNode, AVLTree
+# from avl_tree import AVLNode, AVLTree
+from new_avl_tree_with_fixed_delete import AVLTree  # noqa: F401 – replace 'old_avl_tree_code' with your module name if different
 
 
 class TestAdvancedAVLTree(unittest.TestCase):

@@ -464,3 +464,11 @@ class AVLTree(object):
         result = []
         self.inorder_collect(self.root, result)
         return result
+    
+    def get_max_node(self):
+        """returns the maximum node in the tree
+
+        @rtype: AVLNode
+        @returns: the node with the maximum key, None if the tree is empty
+        """
+        return self.max_node
