@@ -409,10 +409,6 @@ class AVLTree(object):
                     rotations += 1
                 node = self.rotate_left(node)
                 rotations += 1
-
-            # If height hasn't changed after rebalancing, we can stop
-            if node.height == old_height:
-                break
                 
             if node.parent is None:
                 self.root = node
@@ -420,9 +416,12 @@ class AVLTree(object):
         return rotations
 
     def update_upwards(self, node):
-        """Update height and zero_balance_count from node up to root."""
+        """Update height and zero_balance_count from node up to root, stopping if height remains unchanged."""
         while node:
+            old_height = node.height
             node.update_stats()
+            if node.height == old_height:
+                break  # Stop if height remains unchanged
             node = node.parent
 
     

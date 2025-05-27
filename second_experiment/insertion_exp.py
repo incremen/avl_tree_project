@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from bst import BSTree
-from avl_tree import AVLTree
+# from avl_tree import AVLTree
+from new_avl_tree_with_fixed_delete import AVLTree
 
 
 
@@ -98,7 +99,7 @@ def plot_results(results, folder):
 
 if __name__ == "__main__":
     import time
-    sizes_to_test = [10, 50, 100, 200, 500, 1000]
+    sizes_to_test = [10, 50, 100, 200, 500, 1000, 1500, 1700, 2000, 2500]
     start_time = time.time()
     results = run_all_experiments(sizes_to_test)
     # results = run_sorted_experiments(sizes_to_test)
