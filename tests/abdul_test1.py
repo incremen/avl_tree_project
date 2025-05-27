@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # 🔧 Update this import to match the actual location / name of your AVL implementation
 # from avl_tree import AVLTree  # noqa: F401 – replace 'avl' with your module name if different
-from old_avl_tree_code import AVLTree  # noqa: F401 – replace 'old_avl_tree_code' with your module name if different
+from new_avl_tree_with_fixed_delete import AVLTree  # noqa: F401 – replace 'old_avl_tree_code' with your module name if different
 
 def tree_to_str(tree):
     root = tree.get_root()

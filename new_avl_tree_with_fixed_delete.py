@@ -24,6 +24,8 @@ class AVLNode(object):
         self.parent :AVLNode= None
         self.height :int = -1
         self.zero_balance_count :int = 0
+
+
 		
 
     """returns whether self is not a virtual node 
@@ -358,6 +360,18 @@ class AVLTree(object):
         node.left = None
         node.right = None
         node.parent = None
+        # Update max_node if needed
+        if self.max_node == node:
+            # Find new max_node (rightmost node)
+            curr = self.root
+            prev = None
+            while curr and curr.is_real_node() and curr.right:
+                prev = curr
+                curr = curr.right
+            if curr and curr.is_real_node():
+                self.max_node = curr
+            else:
+                self.max_node = prev
         self.update_upwards(rebalance_start)
         self.node_count -= 1
         return self.rebalance(rebalance_start)
@@ -409,3 +423,39 @@ class AVLTree(object):
 
     def _get_balance(self, node):
         return node.get_bf()
+    
+
+    def get_root(self):
+        """returns the root of the tree representing the dictionary
+
+        @rtype: AVLNode
+        @returns: the root, None if the dictionary is empty
+        """
+        return self.root
+
+    def get_amir_balance_factor(self):
+        """gets amir's suggestion of balance factor
+
+        @returns: the number of nodes which have balance factor equals to 0 divided by the total number of nodes
+        """
+        if self.node_count == 0:
+            return 0.0
+        return self.root.zero_balance_count / self.node_count
+
+    def size(self):
+        """returns the number of items in dictionary 
+
+        @rtype: int
+        @returns: the number of items in dictionary 
+        """
+        return self.node_count
+
+    def avl_to_array(self):
+        """returns an array representing dictionary 
+
+        @rtype: list
+        @returns: a sorted list according to key of tuples (key, value) representing the data structure
+        """
+        result = []
+        self.inorder_collect(self.root, result)
+        return result
