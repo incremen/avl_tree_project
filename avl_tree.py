@@ -1,3 +1,82 @@
+def rotate_left(tree, node):
+    new_parent = node.right
+    node.right = new_parent.left
+    if new_parent.left:
+        new_parent.left.parent = node
+    new_parent.left = node
+    new_parent.parent = node.parent
+    node.parent = new_parent
+    if new_parent.parent is None:
+        tree.root = new_parent
+    elif new_parent.parent.left == node:
+        new_parent.parent.left = new_parent
+    else:
+        new_parent.parent.right = new_parent
+    node.update_stats()
+    new_parent.update_stats()
+    return new_parent
+
+
+def rotate_right(tree, node):
+    new_root = node.left
+    node.left = new_root.right
+    if new_root.right:
+        new_root.right.parent = node
+    new_root.right = node
+    new_root.parent = node.parent
+    node.parent = new_root
+    if new_root.parent is None:
+        tree.root = new_root
+    elif new_root.parent.right == node:
+        new_root.parent.right = new_root
+    else:
+        new_root.parent.left = new_root
+    node.update_stats()
+    new_root.update_stats()
+    return new_root
+
+
+def update_and_rebalance_upwards(tree, node):
+    """Update stats and rebalance the tree starting from the given node upwards to the root.
+
+    @type tree: AVLTree
+    @type node: AVLNode
+    @rtype: int
+    @returns: number of rotations performed
+    """
+    rotations = 0
+    while node:
+        old_height = node.height
+        node.update_stats()
+        bf = node.balance_factor()
+
+        # Perform rotations if needed
+        if bf > 1:
+            if node.left.balance_factor() < 0:
+                node.left = rotate_left(tree, node.left)
+                rotations += 1
+            node = rotate_right(tree, node)
+            rotations += 1
+        elif bf < -1:
+            if node.right.balance_factor() > 0:
+                node.right = rotate_right(tree, node.right)
+                rotations += 1
+            node = rotate_left(tree, node)
+            rotations += 1
+
+        # Stop if height hasn't changed
+        if node.height == old_height:
+            break
+
+        # Update root if necessary
+        if node.parent is None:
+            tree.root = node
+
+        node = node.parent
+
+    return rotations
+
+
 #username - complete info
 #id1      - complete info 
 #name1    - complete info 
@@ -101,58 +180,6 @@ class AVLTree(object):
         return (node.left.get_height() if node.left else -1) - (node.right.get_height() if node.right else -1)
 
 
-    """Performs a left rotation on the given node.
-
-    @type node: AVLNode
-    @pre: node.right is a real node
-    @rtype: AVLNode
-    @returns: new root of the subtree after rotation
-    """
-    def rotate_left(self, node):
-        new_parent = node.right
-        node.right = new_parent.left
-        if new_parent.left:
-            new_parent.left.parent = node
-        new_parent.left = node
-        new_parent.parent = node.parent
-        node.parent = new_parent
-        if new_parent.parent is None:
-            self.root = new_parent
-        elif new_parent.parent.left == node:
-            new_parent.parent.left = new_parent
-        else:
-            new_parent.parent.right = new_parent
-        node.update_stats()
-        new_parent.update_stats()
-        return
-
-
-    """Performs a right rotation on the given node.
-
-    @type node: AVLNode
-    @pre: node.left is a real node
-    @rtype: AVLNode
-    @returns: new root of the subtree after rotation
-    """
-    def rotate_right(self, node):
-        new_root = node.left
-        node.left = new_root.right
-        if new_root.right:
-            new_root.right.parent = node
-        new_root.right = node
-        new_root.parent = node.parent
-        node.parent = new_root
-        if new_root.parent is None:
-            self.root = new_root
-        elif new_root.parent.right == node:
-            new_root.parent.right = new_root
-        else:
-            new_root.parent.left = new_root
-        node.update_stats()
-        new_root.update_stats()
-        return
-
-
     """Rebalances the tree starting from the given node upwards to the root.
 
     @type node: AVLNode
@@ -168,15 +195,15 @@ class AVLTree(object):
             bf = node.balance_factor()
             if bf > 1:
                 if node.left.balance_factor() < 0:
-                    node.left = self.rotate_left(node.left)
+                    node.left = rotate_left(self, node.left)
                     rotations += 1
-                node = self.rotate_right(node)
+                node = rotate_right(self, node)
                 rotations += 1
             elif bf < -1:
                 if node.right.balance_factor() > 0:
-                    node.right = self.rotate_right(node.right)
+                    node.right = rotate_right(self, node.right)
                     rotations += 1
-                node = self.rotate_left(node)
+                node = rotate_left(self, node)
                 rotations += 1
 
             # If height hasn't changed after rebalancing, we can stop
@@ -329,7 +356,7 @@ class AVLTree(object):
         # Update metadata and rebalance
         new_node.update_stats()
         self.node_count += 1
-        return self.update_and_rebalance_upwards(parent)
+        return update_and_rebalance_upwards(self, parent)
 
 
     """deletes node from the dictionary
@@ -375,53 +402,14 @@ class AVLTree(object):
                 self.max_node = curr
             else:
                 self.max_node = prev
-        self.update_and_rebalance_upwards(rebalance_start)
+        update_and_rebalance_upwards(self, rebalance_start)
         self.node_count -= 1
-        return self.update_and_rebalance_upwards(rebalance_start)
+        return update_and_rebalance_upwards(self, rebalance_start)
 
     def min_node(self, node):
         while node.left is not None:
             node = node.left
         return node
-
-    def update_and_rebalance_upwards(self, node):
-        """Update stats and rebalance the tree starting from the given node upwards to the root.
-
-        @type node: AVLNode
-        @rtype: int
-        @returns: number of rotations performed
-        """
-        rotations = 0
-        while node:
-            old_height = node.height
-            node.update_stats()
-            bf = node.balance_factor()
-
-            # Perform rotations if needed
-            if bf > 1:
-                if node.left.balance_factor() < 0:
-                    node.left = self.rotate_left(node.left)
-                    rotations += 1
-                node = self.rotate_right(node)
-                rotations += 1
-            elif bf < -1:
-                if node.right.balance_factor() > 0:
-                    node.right = self.rotate_right(node.right)
-                    rotations += 1
-                node = self.rotate_left(node)
-                rotations += 1
-
-            # Stop if height hasn't changed
-            if node.height == old_height:
-                break
-
-            # Update root if necessary
-            if node.parent is None:
-                self.root = node
-
-            node = node.parent
-
-        return rotations
 
     def _get_balance(self, node):
         return node.get_bf()
