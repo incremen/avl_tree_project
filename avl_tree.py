@@ -252,6 +252,17 @@ class AVLTree(object):
             else:
                 node = node.right
         return node
+    
+
+    def transplant(self, u, v):
+        if u.parent is None:
+            self.root = v
+        elif u == u.parent.left:
+            u.parent.left = v
+        else:
+            u.parent.right = v
+        if v is not None:
+            v.parent = u.parent
 
 
     """inserts a new node into the dictionary with corresponding key and value
