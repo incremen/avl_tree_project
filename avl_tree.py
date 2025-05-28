@@ -124,8 +124,7 @@ class AVLTree(object):
             new_parent.parent.right = new_parent
         node.update_stats()
         new_parent.update_stats()
-        self.update_and_rebalance_upwards(new_parent.parent)
-        return new_parent
+        return
 
 
     """Performs a right rotation on the given node.
@@ -151,8 +150,7 @@ class AVLTree(object):
             new_root.parent.left = new_root
         node.update_stats()
         new_root.update_stats()
-        self.update_and_rebalance_upwards(new_root.parent)
-        return new_root
+        return
 
 
     """Rebalances the tree starting from the given node upwards to the root.
