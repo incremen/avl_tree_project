@@ -14,7 +14,7 @@ def rotate_left(tree, node):
         new_parent.parent.right = new_parent
     node.update_stats()
     new_parent.update_stats()
-    return new_parent
+    return
 
 
 def rotate_right(tree, node):
@@ -33,7 +33,7 @@ def rotate_right(tree, node):
         new_parent.parent.left = new_parent
     node.update_stats()
     new_parent.update_stats()
-    return new_parent
+    return 
 
 
 def update_and_rebalance_upwards(tree, node, called_from_insert):
@@ -54,22 +54,22 @@ def update_and_rebalance_upwards(tree, node, called_from_insert):
         # Perform rotations if needed
         if bf > 1:
             if node.left.balance_factor() < 0:
-                node.left = rotate_left(tree, node.left)
+                rotate_left(tree, node.left)
                 rotations += 1
-            node = rotate_right(tree, node)
+            rotate_right(tree, node)
             rotations += 1
             if called_from_insert:
                 break
         elif bf < -1:
             if node.right.balance_factor() > 0:
-                node.right = rotate_right(tree, node.right)
+                rotate_right(tree, node.right)
                 rotations += 1
             node = rotate_left(tree, node)
             rotations += 1
             if called_from_insert:
                 break
 
-        if node.height == old_height:
+        if node.height == old_height and called_from_insert:
             break
 
         # Update root if necessary

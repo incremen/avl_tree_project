@@ -39,7 +39,7 @@ def run_scenario(args):
     return (tree_type, start_mode, "sorted" if data == list(range(n)) else "reversed", n, avg_time)
 
 
-def run_all_experiments(sizes, repeats=5):
+def run_all_experiments(sizes, repeats=1):
     scenarios = [("BST", "root"), ("BST", "max"), ("AVL", "root"), ("AVL", "max")]
     tasks = []
     for n in sizes:
@@ -99,7 +99,7 @@ def plot_results(results, folder):
 
 if __name__ == "__main__":
     import time
-    sizes_to_test = [10,  200, 500, 1000, 1500, 1700, 2000, 2500, 3000, 4000, 5000, 6000, 7000]
+    sizes_to_test = [50* i for i in range(1, 40)]
     start_time = time.time()
     results = run_all_experiments(sizes_to_test)
     # results = run_sorted_experiments(sizes_to_test)

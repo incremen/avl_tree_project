@@ -2,6 +2,7 @@ import time
 import sys
 import os
 import matplotlib.pyplot as plt
+import gc
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -27,7 +28,7 @@ def experiment_task(args):
     bst_max_time = sum(time_insertion(BSTree, "max", sorted_data) for _ in range(repeats)) / repeats
     return n, avl_sorted_time, avl_max_time, bst_max_time
 
-def run_experiment(sizes, repeats=5):
+def run_experiment(sizes, repeats=1):
     results = {"AVL (root)": [], "AVL (max)": [], "BST (max)": []}
 
     for n in sizes:
@@ -61,7 +62,7 @@ def plot_results(results, folder):
     print(f"Saved graph: {out_path}")
 
 if __name__ == "__main__":
-    sizes_to_test = [1000  * i for i in range(1, 23)] 
+    sizes_to_test = [1000  * i for i in range(1, 40)] 
     start_time = time.time()
     results = run_experiment(sizes_to_test)
     plot_results(results, os.path.dirname(__file__))
