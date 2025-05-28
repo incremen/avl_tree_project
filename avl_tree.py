@@ -36,11 +36,12 @@ def rotate_right(tree, node):
     return new_root
 
 
-def update_and_rebalance_upwards(tree, node):
+def update_and_rebalance_upwards(tree, node, called_from_insert):
     """Update stats and rebalance the tree starting from the given node upwards to the root.
 
     @type tree: AVLTree
     @type node: AVLNode
+    @type called_from_insert: bool
     @rtype: int
     @returns: number of rotations performed
     """
@@ -57,12 +58,16 @@ def update_and_rebalance_upwards(tree, node):
                 rotations += 1
             node = rotate_right(tree, node)
             rotations += 1
+            if called_from_insert:
+                break
         elif bf < -1:
             if node.right.balance_factor() > 0:
                 node.right = rotate_right(tree, node.right)
                 rotations += 1
             node = rotate_left(tree, node)
             rotations += 1
+            if called_from_insert:
+                break
 
         # Stop if height hasn't changed
         if node.height == old_height:
@@ -328,7 +333,7 @@ class AVLTree(object):
         # Update metadata and rebalance
         new_node.update_stats()
         self.node_count += 1
-        return update_and_rebalance_upwards(self, parent)
+        return update_and_rebalance_upwards(self, parent, True)
 
 
     """deletes node from the dictionary
@@ -374,9 +379,8 @@ class AVLTree(object):
                 self.max_node = curr
             else:
                 self.max_node = prev
-        update_and_rebalance_upwards(self, rebalance_start)
         self.node_count -= 1
-        return update_and_rebalance_upwards(self, rebalance_start)
+        return update_and_rebalance_upwards(self, rebalance_start, False)
 
     def min_node(self, node):
         while node.left is not None:
