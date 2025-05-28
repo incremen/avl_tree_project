@@ -99,7 +99,7 @@ def plot_results(results, folder):
 
 if __name__ == "__main__":
     import time
-    sizes_to_test = [10, 50, 100, 200, 500, 1000, 1500, 1700, 2000, 2500, 3000, 3500, 4000, 5000, 6000, 7000, 8000, 9000, 10_000, 11000, 12000, 13000, 14000, 15000]
+    sizes_to_test = [10,  200, 500, 1000, 1500, 1700, 2000, 2500, 3000]
     start_time = time.time()
     results = run_all_experiments(sizes_to_test)
     # results = run_sorted_experiments(sizes_to_test)

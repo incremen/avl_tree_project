@@ -109,23 +109,23 @@ class AVLTree(object):
     @returns: new root of the subtree after rotation
     """
     def rotate_left(self, node):
-        new_root = node.right
-        node.right = new_root.left
-        if new_root.left:
-            new_root.left.parent = node
-        new_root.left = node
-        new_root.parent = node.parent
-        node.parent = new_root
-        if new_root.parent is None:
-            self.root = new_root
-        elif new_root.parent.left == node:
-            new_root.parent.left = new_root
+        new_parent = node.right
+        node.right = new_parent.left
+        if new_parent.left:
+            new_parent.left.parent = node
+        new_parent.left = node
+        new_parent.parent = node.parent
+        node.parent = new_parent
+        if new_parent.parent is None:
+            self.root = new_parent
+        elif new_parent.parent.left == node:
+            new_parent.parent.left = new_parent
         else:
-            new_root.parent.right = new_root
+            new_parent.parent.right = new_parent
         node.update_stats()
-        new_root.update_stats()
-        self.update_upwards(new_root.parent)
-        return new_root
+        new_parent.update_stats()
+        self.update_upwards(new_parent.parent)
+        return new_parent
 
 
     """Performs a right rotation on the given node.
@@ -424,7 +424,9 @@ class AVLTree(object):
                     rotations += 1
                 node = self.rotate_left(node)
                 rotations += 1
-                
+            
+            if node.height == old_height:
+                break
             if node.parent is None:
                 self.root = node
             node = node.parent

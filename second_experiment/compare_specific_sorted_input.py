@@ -2,6 +2,8 @@ import time
 import sys
 import os
 import matplotlib.pyplot as plt
+from concurrent.futures import ProcessPoolExecutor
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from bst import BSTree
@@ -18,19 +20,23 @@ def time_insertion(tree_class, start_mode, data):
     t1 = time.time()
     return t1 - t0
 
+def experiment_task(args):
+    n, repeats = args
+    sorted_data = generate_sorted(n)
+    avl_sorted_time = sum(time_insertion(AVLTree, "root", sorted_data) for _ in range(repeats)) / repeats
+    avl_max_time = sum(time_insertion(AVLTree, "max", sorted_data) for _ in range(repeats)) / repeats
+    bst_max_time = sum(time_insertion(BSTree, "max", sorted_data) for _ in range(repeats)) / repeats
+    return n, avl_sorted_time, avl_max_time, bst_max_time
+
 def run_experiment(sizes, repeats=5):
     results = {"AVL (root)": [], "AVL (max)": [], "BST (max)": []}
-    for n in sizes:
-        sorted_data = generate_sorted(n)
-        # AVL insert from root (sorted order)
-        avl_sorted_time = sum(time_insertion(AVLTree, "root", sorted_data) for _ in range(repeats)) / repeats
-        # AVL insert from max (sorted order)
-        avl_max_time = sum(time_insertion(AVLTree, "max", sorted_data) for _ in range(repeats)) / repeats
-        # BST insert from max (sorted order)
-        bst_max_time = sum(time_insertion(BSTree, "max", sorted_data) for _ in range(repeats)) / repeats
-        results["AVL (root)"].append((n, avl_sorted_time))
-        results["AVL (max)"].append((n, avl_max_time))
-        results["BST (max)"].append((n, bst_max_time))
+
+    with ProcessPoolExecutor() as executor:
+        for n, avl_sorted_time, avl_max_time, bst_max_time in executor.map(experiment_task, [(n, repeats) for n in sizes]):
+            results["AVL (root)"].append((n, avl_sorted_time))
+            results["AVL (max)"].append((n, avl_max_time))
+            results["BST (max)"].append((n, bst_max_time))
+
     return results
 
 def plot_results(results, folder):
@@ -53,7 +59,7 @@ def plot_results(results, folder):
     print(f"Saved graph: {out_path}")
 
 if __name__ == "__main__":
-    sizes_to_test = [10, 50, 100, 200, 500, 1000, 1500, 1700, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 6000, 7000, 8000, 9000]
+    sizes_to_test = [1000, 2000, 3000, 4000, 5000, 6000, 7000]
     start_time = time.time()
     results = run_experiment(sizes_to_test)
     plot_results(results, os.path.dirname(__file__))
