@@ -2,7 +2,6 @@ import time
 import sys
 import os
 import matplotlib.pyplot as plt
-from concurrent.futures import ProcessPoolExecutor
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -31,11 +30,14 @@ def experiment_task(args):
 def run_experiment(sizes, repeats=5):
     results = {"AVL (root)": [], "AVL (max)": [], "BST (max)": []}
 
-    with ProcessPoolExecutor() as executor:
-        for n, avl_sorted_time, avl_max_time, bst_max_time in executor.map(experiment_task, [(n, repeats) for n in sizes]):
-            results["AVL (root)"].append((n, avl_sorted_time))
-            results["AVL (max)"].append((n, avl_max_time))
-            results["BST (max)"].append((n, bst_max_time))
+    for n in sizes:
+        avl_sorted_time = sum(time_insertion(AVLTree, "root", generate_sorted(n)) for _ in range(repeats)) / repeats
+        avl_max_time = sum(time_insertion(AVLTree, "max", generate_sorted(n)) for _ in range(repeats)) / repeats
+        bst_max_time = sum(time_insertion(BSTree, "max", generate_sorted(n)) for _ in range(repeats)) / repeats
+
+        results["AVL (root)"].append((n, avl_sorted_time))
+        results["AVL (max)"].append((n, avl_max_time))
+        results["BST (max)"].append((n, bst_max_time))
 
     return results
 
@@ -59,7 +61,7 @@ def plot_results(results, folder):
     print(f"Saved graph: {out_path}")
 
 if __name__ == "__main__":
-    sizes_to_test = [1000, 2000, 3000, 4000, 5000, 6000, 7000]
+    sizes_to_test = [1000  * i for i in range(1, 23)] 
     start_time = time.time()
     results = run_experiment(sizes_to_test)
     plot_results(results, os.path.dirname(__file__))
