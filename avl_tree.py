@@ -375,41 +375,6 @@ class AVLTree(object):
             node = node.left
         return node
 
-    def rebalance(self, node):
-        rotations = 0
-        while node:
-            old_height = node.height
-            node.update_stats()
-            bf = node.balance_factor()
-            if bf > 1:
-                if node.left.balance_factor() < 0:
-                    node.left = self.rotate_left(node.left)
-                    rotations += 1
-                node = self.rotate_right(node)
-                rotations += 1
-            elif bf < -1:
-                if node.right.balance_factor() > 0:
-                    node.right = self.rotate_right(node.right)
-                    rotations += 1
-                node = self.rotate_left(node)
-                rotations += 1
-            
-            if node.height == old_height:
-                break
-            if node.parent is None:
-                self.root = node
-            node = node.parent
-        return rotations
-
-    def update_upwards(self, node):
-        """Update height and zero_balance_count from node up to root, stopping if height remains unchanged."""
-        while node:
-            old_height = node.height
-            node.update_stats()
-            if node.height == old_height:
-                break  # Stop if height remains unchanged
-            node = node.parent
-
     def update_and_rebalance_upwards(self, node):
         """Update stats and rebalance the tree starting from the given node upwards to the root.
 
