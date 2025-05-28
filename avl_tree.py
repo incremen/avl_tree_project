@@ -191,26 +191,6 @@ class AVLTree(object):
         return rotations
 
 
-    """replaces the subtree rooted at node u with the subtree rooted at node v
-
-    @type u: AVLNode
-    @param u: the node to be replaced
-    @type v: AVLNode | None
-    @param v: the node to replace u with (can be None)
-    @rtype: None
-    @return: None
-    """
-    def transplant(self, u, v):
-        if u.parent is None:
-            self.root = v
-        elif u == u.parent.left:
-            u.parent.left = v
-        else:
-            u.parent.right = v
-        if v is not None:
-            v.parent = u.parent
-
-
     """returns the node with the minimum key in the subtree rooted at the given node
 
     @type node: AVLNode
@@ -389,16 +369,6 @@ class AVLTree(object):
         self.update_and_rebalance_upwards(rebalance_start)
         self.node_count -= 1
         return self.update_and_rebalance_upwards(rebalance_start)
-
-    def transplant(self, u, v):
-        if u.parent is None:
-            self.root = v
-        elif u == u.parent.left:
-            u.parent.left = v
-        else:
-            u.parent.right = v
-        if v is not None:
-            v.parent = u.parent
 
     def min_node(self, node):
         while node.left is not None:
