@@ -187,34 +187,6 @@ class AVLTree(object):
     @rtype: int
     @returns: number of rotations performed
     """
-    def rebalance(self, node):
-        rotations = 0
-        while node:
-            old_height = node.height
-            node.update_stats()
-            bf = node.balance_factor()
-            if bf > 1:
-                if node.left.balance_factor() < 0:
-                    node.left = rotate_left(self, node.left)
-                    rotations += 1
-                node = rotate_right(self, node)
-                rotations += 1
-            elif bf < -1:
-                if node.right.balance_factor() > 0:
-                    node.right = rotate_right(self, node.right)
-                    rotations += 1
-                node = rotate_left(self, node)
-                rotations += 1
-
-            # If height hasn't changed after rebalancing, we can stop
-            if node.height == old_height:
-                break
-                
-            if node.parent is None:
-                self.root = node
-            node = node.parent
-        return rotations
-
 
     """returns the node with the minimum key in the subtree rooted at the given node
 
