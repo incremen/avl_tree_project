@@ -78,11 +78,12 @@ def plot_results(results, folder):
             for start_mode in ['root', 'max']:
                 y = [r[4] for r in data if r[0] == tree_type and r[1] == start_mode]
                 x = [r[3] for r in data if r[0] == tree_type and r[1] == start_mode]
+                # Discount the last 5 points
+                if len(x) > 5 and len(y) > 5:
+                    x = x[:-5]
+                    y = y[:-5]
                 label = f"{tree_type} ({start_mode})"
-                plt.plot(x, y, marker='o', label=label)
-                # Add labels to each point in base 10
-                for i, j in zip(x, y):
-                    plt.text(i, j, f"{j:.6f}", fontsize=8, ha='right')
+                plt.plot(x, y, label=label)  # Removed marker and point labels
         plt.xlabel('n (number of elements)')
         plt.ylabel('Average Insertion Time (seconds)')
         plt.title(f'Insertion Time vs n ({input_type.capitalize()} Data)')
@@ -99,7 +100,7 @@ def plot_results(results, folder):
 
 if __name__ == "__main__":
     import time
-    sizes_to_test = [500 * i for i in range(1, 15)] 
+    sizes_to_test = [400 * i for i in range(1, 23)] 
     start_time = time.time()
     results = run_all_experiments(sizes_to_test)
     # results = run_sorted_experiments(sizes_to_test)
