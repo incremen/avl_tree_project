@@ -155,7 +155,8 @@ class AVLTree(object):
     def __init__(self):
         self.root = None
         self.node_count = 0
-        self.max_node = None  # Maintain a pointer to the maximum node
+        self.max_node = None  
+        self.total_zero_balance_nodes = 0
 
 
     """Updates the height of a given node based on its children.
