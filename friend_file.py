@@ -20,16 +20,10 @@ class AVLNode(object):
         self.key = key
         self.value = value
         self.parent = None
-        self.left = None if isVirtual else AVLNodeVirtual.instance()
-        self.right = None if isVirtual else AVLNodeVirtual.instance()
+        self.left = None if isVirtual else VirtualAVLNode.instance()
+        self.right = None if isVirtual else VirtualAVLNode.instance()
         self.height = 0 if not isVirtual else -1
         self.is_balanced = True if not isVirtual else False
-
-    """returns whether self is not a virtual node 
-
-	@rtype: bool
-	@returns: False if self is a virtual node, True otherwise.
-	"""
 
     def is_real_node(self):
         return True
@@ -38,17 +32,20 @@ class AVLNode(object):
         return self.left.height - self.right.height
 
 
-class AVLNodeVirtual(AVLNode):
-    __instance = None
+class VirtualAVLNode(AVLNode):
+    singleton_object = None
 
     def __init__(self):
         super().__init__(None, None, True)
+        singleton_object = None
+        return None
+
 
     @staticmethod
     def instance():
-        if AVLNodeVirtual.__instance is None:
-            AVLNodeVirtual.__instance = AVLNodeVirtual()
-        return AVLNodeVirtual.__instance
+        if VirtualAVLNode.singleton_object is None:
+            VirtualAVLNode.singleton_object = VirtualAVLNode()
+        return VirtualAVLNode.singleton_object
 
     def is_real_node(self):
         return False
@@ -63,7 +60,7 @@ def get_balance(node):
     return node.left.height - node.right.height
 
 
-def _min_node(node):
+def min_node_of(node):
     while node.left.is_real_node():
         node = node.left
     return node
@@ -76,7 +73,7 @@ class AVLTree(object):
 	"""
 
     def __init__(self):
-        self.root = AVLNodeVirtual.instance()
+        self.root = VirtualAVLNode.instance()
         self.max = self.root
         self._size = 0
         self._balanced_nodes = 0
@@ -99,6 +96,10 @@ class AVLTree(object):
             else:
                 node = node.right
         return None
+    
+    def find(self, key):
+        """Alias for search method."""
+        return self.search(key)
 
     """inserts a new node into the dictionary with corresponding key and value
 
@@ -174,7 +175,7 @@ class AVLTree(object):
             return 0
 
         if node.left.is_real_node() and node.right.is_real_node():
-            succ = _min_node(node.right)
+            succ = min_node_of(node.right)
             self._replace_node_data_with_successor(node, succ)
             node = succ
 
@@ -191,7 +192,7 @@ class AVLTree(object):
         rebalance_count = self.rebalance_after_change(child)
 
         if self._size == 0:
-            self.root = AVLNodeVirtual.instance()
+            self.root = VirtualAVLNode.instance()
             self.max = self.root
 
         return rebalance_count
@@ -209,7 +210,7 @@ class AVLTree(object):
         elif self.max.parent is not None:
             self.max = self.max.parent
         else:
-            self.max = AVLNodeVirtual.instance()
+            self.max = VirtualAVLNode.instance()
 
     """returns an array representing dictionary 
 
