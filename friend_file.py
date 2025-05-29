@@ -23,7 +23,7 @@ class AVLNode(object):
         self.left = None if isVirtual else AVLNodeVirtual.instance()
         self.right = None if isVirtual else AVLNodeVirtual.instance()
         self.height = 0 if not isVirtual else -1
-        self.isBalanced = True if not isVirtual else False
+        self.is_balanced = True if not isVirtual else False
 
     """returns whether self is not a virtual node 
 
@@ -189,9 +189,9 @@ class AVLTree(object):
 
         child = self.get_least_none_child(node)
 
-        self.replace_node(node, child)
+        self.switch_node_with(node, child)
         self._size -= 1
-        if node.isBalanced:
+        if node.is_balanced:
             self._balanced_nodes -= 1
 
         rebalance_count = self.rebalance_after_change(child)
@@ -289,12 +289,12 @@ class AVLTree(object):
         node.height = 1 + max(node.left.height, node.right.height)
 
         new_is_balanced = (node.left.height == node.right.height)
-        if new_is_balanced != node.isBalanced:
+        if new_is_balanced != node.is_balanced:
             if new_is_balanced:
                 self._balanced_nodes += 1
             else:
                 self._balanced_nodes -= 1
-        node.isBalanced = new_is_balanced
+        node.is_balanced = new_is_balanced
 
     def rebalance_node(self, node):
         rebalance_count = 0
@@ -346,7 +346,7 @@ class AVLTree(object):
         self.update_node_fields(y)
         self.update_node_fields(x)
 
-    def replace_node(self, node, child):
+    def switch_node_with(self, node, child):
         if node.parent is None:
             self.root = child
             child.parent = None
