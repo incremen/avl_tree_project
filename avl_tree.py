@@ -428,3 +428,4 @@ class AVLTree(object):
         @returns: the node with the maximum key, None if the tree is empty
         """
         return self.max_node
+    
