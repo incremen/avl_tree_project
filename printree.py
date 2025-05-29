@@ -3,13 +3,14 @@
 ## Written by a former student in the course - thanks to Amitai Cohen
 ## No need to fully understand this code
 
-def printree(t, file=None, bykey=True):
+def printree(t, file=None, append=True, bykey=True):
     """Print a textual representation of t
     bykey=True: show keys instead of values, and also show balance factor
     file: if provided (as a filename), write output to this file (file is always cleared first)"""
     rows = trepr(t, bykey)
+    mode = "a" if append else "w"
     if file:
-        with open(file, 'w') as f:
+        with open(file, mode) as f:
             for row in rows:
                 print(row)
                 print(row, file=f)

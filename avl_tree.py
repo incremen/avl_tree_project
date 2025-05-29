@@ -64,12 +64,12 @@ def update_and_rebalance_upwards(tree, node, called_from_insert):
             if node.right.balance_factor() > 0:
                 rotate_right(tree, node.right)
                 rotations += 1
-            node = rotate_left(tree, node)
+            rotate_left(tree, node)
             rotations += 1
             if called_from_insert:
                 break
 
-        if node.height == old_height and called_from_insert:
+        if node.height == old_height:
             break
 
         # Update root if necessary
