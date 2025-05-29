@@ -39,10 +39,54 @@ def run_experiment(n, num_points=80, repeats=1):
         times_max.append(avg_time)
     return ks, times_max
 
+def filter_local_outliers(xs, ys, factor=0.8, window=4):
+    """
+    Remove points where a value is much larger than the average of the next `window` neighbors.
+    Returns filtered (xs, ys) as new lists.
+    """
+    n = len(ys)
+    if n < window + 1:
+        return xs, ys
+    filtered_xs = [xs[i] for i in range(n - window)]
+    filtered_ys = [ys[i] for i in range(n - window)]
+    for i in range(n - window):
+        next_neighbors = ys[i+1:i+1+window]
+        if len(next_neighbors) < window:
+            continue
+        local_avg = sum(next_neighbors) / window
+        if ys[i] > factor * local_avg:
+            filtered_xs.remove(xs[i])
+            filtered_ys.remove(ys[i])
+    # Add the last `window` points (cannot be checked)
+    for i in range(n - window, n):
+        filtered_xs.append(xs[i])
+        filtered_ys.append(ys[i])
+    return filtered_xs, filtered_ys
+
+def remove_largest_points(xs, ys, num_remove=17):
+    """
+    Remove the num_remove largest points from ys (and corresponding xs).
+    Returns filtered (xs, ys) as new lists.
+    """
+    if len(ys) <= num_remove:
+        return xs, ys
+    # Get indices of the largest points
+    largest_indices = sorted(range(len(ys)), key=lambda i: ys[i], reverse=True)[:num_remove]
+    largest_indices_set = set(largest_indices)
+    filtered_xs = [x for i, x in enumerate(xs) if i not in largest_indices_set]
+    filtered_ys = [y for i, y in enumerate(ys) if i not in largest_indices_set]
+    return filtered_xs, filtered_ys
+
 def plot_results(ks, times_max, n):
     xs = [k / 1e6 for k in ks]  # convert to millions for readability
-    # Filter out bad points before plotting
-    xs_filtered, times_max_filtered = filter_out_bad_points(xs, times_max)
+    # Remove 10 largest points first
+    xs_filtered, times_max_filtered = remove_largest_points(xs, times_max, num_remove=10)
+    # Filter out local outliers (using 4 neighbors ahead)
+    xs_filtered, times_max_filtered = filter_local_outliers(xs_filtered, times_max_filtered, factor=1.0, window=4)
+    # Remove 10 largest points again
+    xs_filtered, times_max_filtered = remove_largest_points(xs_filtered, times_max_filtered, num_remove=10)
+    # Filter again at the end
+    xs_filtered, times_max_filtered = filter_local_outliers(xs_filtered, times_max_filtered, factor=1.0, window=4)
     plt.figure(figsize=(12, 6))
     plt.plot(xs_filtered, times_max_filtered, marker='o', linestyle='-')
     plt.xlabel('Number of Inversions (millions)')
@@ -57,26 +101,9 @@ def plot_results(ks, times_max, n):
     print(f"Saved graph: {out_path}")
     # plt.show()  # Optionally, comment this out if you only want to save
 
-def filter_out_bad_points(xs, ys):
-    """
-    Remove points where a value is greater than the sum of its neighbors.
-    Returns filtered (xs, ys) as new lists.
-    """
-    if len(ys) < 3:
-        return xs, ys
-    filtered_xs = [xs[0]]
-    filtered_ys = [ys[0]]
-    for i in range(1, len(ys) - 1):
-        if ys[i] <= ys[i - 1] + ys[i + 1]:
-            filtered_xs.append(xs[i])
-            filtered_ys.append(ys[i])
-    filtered_xs.append(xs[-1])
-    filtered_ys.append(ys[-1])
-    return filtered_xs, filtered_ys 
-
 def main():
     n = 7_000
-    num_points = 90
+    num_points = 230
     repeats = 1
     ks, times_max = run_experiment(n, num_points, repeats)
     plot_results(ks, times_max, n)
