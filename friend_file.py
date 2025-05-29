@@ -21,14 +21,14 @@ class AVLNode(object):
     @type value: string
     @param value: data of your node
     """
-    def __init__(self, key: Optional[int], value: Optional[str], isVirtual: bool = False):
+    def __init__(self, key: Optional[int], value: Optional[str], is_a_virtual_node: bool = False):
         self.key: Optional[int] = key
         self.value: Optional[str] = value
         self.parent: Optional['AVLNode'] = None
-        self.left: Optional['AVLNode'] = None if isVirtual else VirtualAVLNode.get_create_instance()
-        self.right: Optional['AVLNode'] = None if isVirtual else VirtualAVLNode.get_create_instance()
-        self.height: int = 0 if not isVirtual else -1
-        self.is_balanced: bool = True if not isVirtual else False
+        self.left: Optional['AVLNode'] = None if is_a_virtual_node else VirtualAVLNode.get_create_instance()
+        self.right: Optional['AVLNode'] = None if is_a_virtual_node else VirtualAVLNode.get_create_instance()
+        self.height: int = 0 if not is_a_virtual_node else -1
+        self.is_balanced: bool = True if not is_a_virtual_node else False
 
     def is_real_node(self) -> bool:
         return True
