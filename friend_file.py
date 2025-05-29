@@ -178,16 +178,11 @@ class AVLTree(object):
 
         if node.left.is_real_node() and node.right.is_real_node():
             succ = _min_node(node.right)
-            node.key, node.value = succ.key, succ.value
+            self._replace_node_data_with_successor(node, succ)
             node = succ
 
         if node == self.max:
-            if self.max.left.is_real_node():
-                self.max = self.max.left
-            elif self.max.parent is not None:
-                self.max = self.max.parent
-            else:
-                self.max = AVLNodeVirtual.instance()
+            self._update_max_on_delete()
 
         child = node.left if node.left.is_real_node() else node.right
 
@@ -204,6 +199,17 @@ class AVLTree(object):
 
         return rebalance_count
 
+    def _replace_node_data_with_successor(self, node, succ):
+        node.key, node.value = succ.key, succ.value
+
+    def _update_max_on_delete(self):
+        if self.max.left.is_real_node():
+            self.max = self.max.left
+        elif self.max.parent is not None:
+            self.max = self.max.parent
+        else:
+            self.max = AVLNodeVirtual.instance()
+
     """returns an array representing dictionary 
 
 	@rtype: list
@@ -218,8 +224,14 @@ class AVLTree(object):
     def inorder(self, node, res):
         if not node.is_real_node():
             return
-        self.inorder(node.left, res)
+        self._inorder_left(node, res)
         res.append((node.key, node.value))
+        self._inorder_right(node, res)
+
+    def _inorder_left(self, node, res):
+        self.inorder(node.left, res)
+
+    def _inorder_right(self, node, res):
         self.inorder(node.right, res)
 
     """returns the number of items in dictionary 
