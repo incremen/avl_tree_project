@@ -71,6 +71,7 @@ def update_and_rebalance_upwards(tree, node, was_called_from_insert):
         node.update_stats()
         
         new_bf = node.balance_factor()
+        print(f"{new_bf=}, {old_bf=}, {node.key=}")
         if old_bf != new_bf:
             if new_bf == 0:
                 tree.total_zero_balance_nodes += 1
@@ -282,6 +283,8 @@ class AVLTree(object):
             self.root.height = 0
             self.max_node = self.root
             self.node_count += 1
+
+            
             return 0
 
         # Choose starting point
@@ -321,6 +324,10 @@ class AVLTree(object):
 
         # Update metadata and rebalance
         new_node.update_stats()
+        # Check the balance factor of the newly added node
+
+        if new_node.balance_factor() == 0:
+            self.total_zero_balance_nodes += 1
         self.node_count += 1
         return update_and_rebalance_upwards(self, parent, True)
 

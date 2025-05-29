@@ -43,6 +43,17 @@ def test_sequential_inserts():
         print_and_log(f"\n=== After Deleting {i} ===\nTree size: {tree.size()}")
         printree(tree.root, file="tree_output.txt", append=True)
 
+def test_single_node_balance_factor():
+    tree = AVLTree()
+    tree.insert(1,1) 
+    tree.insert(2,2)
+    tree.insert(3,3) 
+    tree.insert(4,4)
+     # Insert a single node
+
+    printree(tree.root, file="tree_output.txt", append=True)
+    print_and_log(f"Amir's Balance Factor: {tree.get_amir_balance_factor()}")
+
 
 if __name__ == "__main__":
-    test_sequential_inserts()
+    test_single_node_balance_factor()
