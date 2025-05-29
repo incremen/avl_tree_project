@@ -217,22 +217,6 @@ class AVLTree(object):
         result.append((node.key, node.value))
         self.inorder_collect(node.right, result)
 
-
-    """Recursively counts how many real nodes in the subtree rooted at 'node' have a balance factor of exactly 0.
-
-    @type node: AVLNode
-    @param node: root of the subtree
-    @rtype: int
-    @return: number of real nodes with balance factor 0
-    """
-    def count_zero_balance_nodes(self, node):
-        if node is None or not node.is_real_node():
-            return 0
-        left = self.count_zero_balance_nodes(node.left)
-        right = self.count_zero_balance_nodes(node.right)
-        bf = self.get_bf(node)
-        return left + right + (1 if bf == 0 else 0)
-
     
     """searches for a node in the dictionary corresponding to the key
 
