@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from bst import BSTree
 # from avl_tree import AVLTree
-from friend_file import AVLTree
+from avl_tree import AVLTree
 
 
 

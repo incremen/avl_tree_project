@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # 🔧 Update this import to match the actual location / name of your AVL implementation
 # from avl_tree import AVLTree  # noqa: F401 – replace 'avl' with your module name if different
-from friend_file import AVLTree  # noqa: F401 – replace 'old_avl_tree_code' with your module name if different
+from avl_tree import AVLTree  # noqa: F401 – replace 'old_avl_tree_code' with your module name if different
 
 open("avl_error_log.txt", "w", encoding="utf-8").close()
 

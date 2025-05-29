@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from friend_file import AVLTree
+from avl_tree import AVLTree
 import time
 import matplotlib.pyplot as plt
 import datetime

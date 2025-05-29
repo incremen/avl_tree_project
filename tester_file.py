@@ -1,5 +1,5 @@
 import unittest
-from friend_file import AVLNode, AVLTree
+from avl_tree import AVLNode, AVLTree
 
 #In order to run this test:
 #  1. this file should be in the same directory as AVLTree.py.
