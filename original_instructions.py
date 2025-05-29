@@ -67,7 +67,7 @@ class AVLTree(object):
 	@param key: key of item that is to be inserted to self
 	@type val: string
 	@param val: the value of the item
-    @param start: can be either "root" or "max"
+	@param start: can be either "root" or "max"
 	@rtype: int
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
@@ -113,7 +113,7 @@ class AVLTree(object):
 		return None
 
 
-    """gets amir's suggestion of balance factor
+	"""gets amir's suggestion of balance factor
 
 	@returns: the number of nodes which have balance factor equals to 0 devided by the total number of nodes
 	"""
