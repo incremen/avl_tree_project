@@ -45,11 +45,14 @@ def test_sequential_inserts():
 
 def test_single_node_balance_factor():
     tree = AVLTree()
+    print_and_log("inserting 1\n")
     tree.insert(1,1) 
+    print_and_log("inserting 2\n")
     tree.insert(2,2)
-    tree.insert(3,3) 
+    print_and_log("inserting 3\n")  
+    tree.insert(3,3)    
+    print_and_log("inserting 4\n") 
     tree.insert(4,4)
-     # Insert a single node
 
     printree(tree.root, file="tree_output.txt", append=True)
     print_and_log(f"Amir's Balance Factor: {tree.get_amir_balance_factor()}")

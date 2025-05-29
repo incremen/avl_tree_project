@@ -383,3 +383,43 @@ Amir's Balance Factor: 0.75
              / | 
             #   #
 Amir's Balance Factor: 0.75
+inserting 1
+inserting 2
+  1      
+ / |__   
+#     2  
+     / | 
+    #   #
+Amir's Balance Factor: 0.5
+inserting 1
+
+inserting 2
+
+inserting 3
+
+inserting 4
+
+      2          
+   __/ |__       
+  1       3      
+ / |     / |__   
+#   #   #     4  
+             / | 
+            #   #
+Amir's Balance Factor: 0.75
+inserting 1
+
+inserting 2
+
+inserting 3
+
+inserting 4
+
+      2          
+   __/ |__       
+  1       3      
+ / |     / |__   
+#   #   #     4  
+             / | 
+            #   #
+Amir's Balance Factor: 0.75
