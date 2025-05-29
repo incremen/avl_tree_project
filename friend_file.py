@@ -219,22 +219,17 @@ class AVLTree(object):
 	"""
 
     def avl_to_array(self):
-        res = []
-        self.inorder(self.root, res)
-        return res
+        result = []
+        self.inorder_collect(self.root, result )
+        return result
 
-    def inorder(self, node, res):
-        if not node.is_real_node():
+
+    def inorder_collect(self, node, result):
+        if node is None or not node.is_real_node():
             return
-        self._inorder_left(node, res)
-        res.append((node.key, node.value))
-        self._inorder_right(node, res)
-
-    def _inorder_left(self, node, res):
-        self.inorder(node.left, res)
-
-    def _inorder_right(self, node, res):
-        self.inorder(node.right, res)
+        self.inorder_collect(node.left, result)
+        result.append((node.key, node.value))
+        self.inorder_collect(node.right, result)
 
     """returns the number of items in dictionary 
 
