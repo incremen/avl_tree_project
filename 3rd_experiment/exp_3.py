@@ -103,7 +103,7 @@ def plot_results(ks, times_max, n):
 
 def main():
     n = 7_000
-    num_points = 230
+    num_points = 300
     repeats = 1
     ks, times_max = run_experiment(n, num_points, repeats)
     plot_results(ks, times_max, n)
