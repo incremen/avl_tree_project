@@ -33,12 +33,6 @@ class AVLNode(object):
 
     def is_real_node(self):
         return True
-
-    def __str__(self):
-        if not self.is_real_node():
-            return "#"
-
-        return f"({self.key}, {self.value})"
     
     def get_bf(self):
         return self.left.height - self.right.height
