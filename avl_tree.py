@@ -159,7 +159,7 @@ class AVLTree(object):
 
 		if node.left.is_real_node() and node.right.is_real_node():
 			succ = min_node_of(node.right)
-			self._replace_node_data_with_successor(node, succ)
+			self.replace_node_with(node, succ)
 			node = succ
 
 		if node == self.max:
@@ -184,7 +184,7 @@ class AVLTree(object):
 		child = node.left if node.left.is_real_node() else node.right
 		return child
 
-	def _replace_node_data_with_successor(self, node: AVLNode, succ: AVLNode) -> None:
+	def replace_node_with(self, node: AVLNode, succ: AVLNode) -> None:
 		node.key, node.value = succ.key, succ.value
 
 	def _update_max_on_delete(self) -> None:
