@@ -36,7 +36,7 @@ def rotate_right(tree, node):
     return 
 
 
-def update_and_rebalance_upwards(tree, node, called_from_insert):
+def update_and_rebalance_upwards(tree, node, was_called_from_insert):
     """Update stats and rebalance the tree starting from the given node upwards to the root.
 
     @type tree: AVLTree
@@ -57,7 +57,7 @@ def update_and_rebalance_upwards(tree, node, called_from_insert):
                 rotations += 1
             rotate_right(tree, node)
             rotations += 1
-            if called_from_insert:
+            if was_called_from_insert:
                 break
         elif old_bf < -1:
             if node.right.balance_factor() > 0:
@@ -65,7 +65,7 @@ def update_and_rebalance_upwards(tree, node, called_from_insert):
                 rotations += 1
             rotate_left(tree, node)
             rotations += 1
-            if called_from_insert:
+            if was_called_from_insert:
                 break
 
         node.update_stats()
@@ -79,10 +79,10 @@ def update_and_rebalance_upwards(tree, node, called_from_insert):
                 tree.total_zero_balance_nodes -= 1
             
         
-        if node.height == old_height:
+        if node.height == old_height and was_called_from_insert:
             break
 
-        # Update root if necessary
+        # Update root if necessary  
         if node.parent is None:
             tree.root = node
 
