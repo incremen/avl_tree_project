@@ -121,10 +121,7 @@ class AVLTree(object):
     def insert(self, key, val, start="root"):
         # Handle empty tree case
         if not self.root.is_real_node():
-            self.root = AVLNode(key, val)
-            self.max = self.root
-            self._size = 1
-            self._balanced_nodes = 1
+            self.create_root(key, val)
             return 0
 
         # Choose starting point
@@ -164,6 +161,12 @@ class AVLTree(object):
         self._balanced_nodes += 1
         return self.rebalance_after_change(new_node)
 
+    def create_root(self, key, val):
+        self.root = AVLNode(key, val)
+        self.max = self.root
+        self._size = 1
+        self._balanced_nodes = 1
+
     """deletes node from the dictionary
 
 	@type node: AVLNode
@@ -184,7 +187,7 @@ class AVLTree(object):
         if node == self.max:
             self._update_max_on_delete()
 
-        child = node.left if node.left.is_real_node() else node.right
+        child = self.get_least_none_child(node)
 
         self.replace_node(node, child)
         self._size -= 1
@@ -198,6 +201,10 @@ class AVLTree(object):
             self.max = self.root
 
         return rebalance_count
+
+    def get_least_none_child(self, node):
+        child = node.left if node.left.is_real_node() else node.right
+        return child
 
     def _replace_node_data_with_successor(self, node, succ):
         node.key, node.value = succ.key, succ.value
