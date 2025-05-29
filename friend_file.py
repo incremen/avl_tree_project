@@ -119,6 +119,7 @@ class AVLTree(object):
 	"""
 
     def insert(self, key, val, start="root"):
+        # Handle empty tree case
         if not self.root.is_real_node():
             self.root = AVLNode(key, val)
             self.max = self.root
@@ -126,31 +127,38 @@ class AVLTree(object):
             self._balanced_nodes = 1
             return 0
 
+        # Choose starting point
+        current = self.root if start == "root" else self.max
+
+        # If starting from max, climb UP until we're at a node whose subtree should contain the new key
         if start == "max":
-            node = self.max
-            while node != self.root and node.key > key:
-                node = node.parent
-        else:
-            node = self.root
+            while current != self.root and current.key > key and current.parent:
+                current = current.parent
 
+        # Now do standard BST descent from that node
         parent = None
-        while node.is_real_node():
-            parent = node
-            if key < node.key:
-                node = node.left
-            else:
-                node = node.right
+        while current.is_real_node():
+            parent = current
+            if key < current.key:
+                if not current.left.is_real_node():
+                    break
+                current = current.left
+            else:  # key > current.key
+                if not current.right.is_real_node():
+                    break
+                current = current.right
 
+        # Create and attach new node
         new_node = AVLNode(key, val)
         new_node.parent = parent
-
-        if key > self.max.key:
-            self.max = new_node
-
         if key < parent.key:
             parent.left = new_node
         else:
             parent.right = new_node
+
+        # Update max if needed
+        if key > self.max.key:
+            self.max = new_node
 
         self._size += 1
         self._balanced_nodes += 1
@@ -340,32 +348,3 @@ class AVLTree(object):
         return node.get_bf()
 
 
-if __name__ == "__main__":
-    avl_tree = AVLTree()
-    avl_tree.insert(35, '35')
-    avl_tree.insert(67, '67')
-    avl_tree.insert(42, '42')
-    avl_tree.insert(30, '30')
-    avl_tree.insert(37, '37')
-    avl_tree.insert(69, '69')
-    avl_tree.insert(10, '10')
-    avl_tree.insert(39, '39')
-    avl_tree.insert(45, '45')
-    avl_tree.insert(21, '21')
-    avl_tree.insert(5, '5')
-    avl_tree.insert(23, '23')
-    avl_tree.insert(36, '36')
-    avl_tree.insert(41, '41')
-    avl_tree.insert(71, '71')
-    avl_tree.insert(47, '47')
-    avl_tree.insert(32, '32')
-    avl_tree.insert(17, '17')
-    avl_tree.insert(33, '33')
-    avl_tree.insert(9, '9')
-    avl_tree.insert(68, '68')
-    avl_tree.insert(52, '52')
-    avl_tree.insert(53, '53')
-    avl_tree.insert(54, '54')
-    avl_tree.insert(15, '15')
-    avl_tree.insert(40, '40')
-    x = 0
