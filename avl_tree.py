@@ -57,16 +57,14 @@ def update_and_rebalance_upwards(tree, node, was_called_from_insert):
                 rotations += 1
             rotate_right(tree, node)
             rotations += 1
-            if was_called_from_insert:
-                break
+
         elif old_bf < -1:
             if node.right.balance_factor() > 0:
                 rotate_right(tree, node.right)
                 rotations += 1
             rotate_left(tree, node)
             rotations += 1
-            if was_called_from_insert:
-                break
+
 
         node.update_stats()
         
@@ -76,10 +74,11 @@ def update_and_rebalance_upwards(tree, node, was_called_from_insert):
             if new_bf == 0:
                 tree.total_zero_balance_nodes += 1
             elif old_bf == 0:
-                #its not zero anymore
                 tree.total_zero_balance_nodes -= 1
             
-        
+        if rotations > 0 and was_called_from_insert:
+            break
+
         if node.height == old_height and was_called_from_insert:
             break
 
