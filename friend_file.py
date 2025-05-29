@@ -1,3 +1,9 @@
+# =============================
+# AVL Tree Implementation
+# =============================
+
+from typing import Optional, List, Tuple
+
 #username - complete info
 #id1      - complete info 
 #name1    - complete info 
@@ -10,83 +16,78 @@
 class AVLNode(object):
     """Constructor, you are allowed to add more fields.
 
-	@type key: int or None
-	@param key: key of your node
-	@type value: string
-	@param value: data of your node
-	"""
+    @type key: int or None
+    @param key: key of your node
+    @type value: string
+    @param value: data of your node
+    """
+    def __init__(self, key: Optional[int], value: Optional[str], isVirtual: bool = False):
+        self.key: Optional[int] = key
+        self.value: Optional[str] = value
+        self.parent: Optional['AVLNode'] = None
+        self.left: Optional['AVLNode'] = None if isVirtual else VirtualAVLNode.get_create_instance()
+        self.right: Optional['AVLNode'] = None if isVirtual else VirtualAVLNode.get_create_instance()
+        self.height: int = 0 if not isVirtual else -1
+        self.is_balanced: bool = True if not isVirtual else False
 
-    def __init__(self, key, value, isVirtual=False):
-        self.key = key
-        self.value = value
-        self.parent = None
-        self.left = None if isVirtual else VirtualAVLNode.get_create_instance()
-        self.right = None if isVirtual else VirtualAVLNode.get_create_instance()
-        self.height = 0 if not isVirtual else -1
-        self.is_balanced = True if not isVirtual else False
-
-    def is_real_node(self):
+    def is_real_node(self) -> bool:
         return True
     
-    def get_bf(self):
+    def get_bf(self) -> int:
         return self.left.height - self.right.height
 
 
+# =============================
+# Virtual Node Singleton
+# =============================
+
 class VirtualAVLNode(AVLNode):
-    singleton_object = None
+    singleton_object: Optional['VirtualAVLNode'] = None
 
     def __init__(self):
         super().__init__(None, None, True)
-        singleton_object = None
-        return None
-
+        # singleton_object = None  # Not needed
 
     @staticmethod
-    def get_create_instance():
+    def get_create_instance() -> 'VirtualAVLNode':
         if VirtualAVLNode.singleton_object is None:
             VirtualAVLNode.singleton_object = VirtualAVLNode()
         return VirtualAVLNode.singleton_object
 
-    def is_real_node(self):
+    def is_real_node(self) -> bool:
         return False
 
 
-"""
-A class implementing an AVL tree.
-"""
+# =============================
+# Utility Functions
+# =============================
 
-
-def get_balance(node):
+def get_balance(node: AVLNode) -> int:
     return node.left.height - node.right.height
 
 
-def min_node_of(node):
+def min_node_of(node: AVLNode) -> AVLNode:
     while node.left.is_real_node():
         node = node.left
     return node
 
 
+# =============================
+# AVL Tree Class
+# =============================
+
 class AVLTree(object):
     """
-	Constructor, you are allowed to add more fields.
-
-	"""
-
+    Constructor, you are allowed to add more fields.
+    """
     def __init__(self):
-        self.root = VirtualAVLNode.get_create_instance()
-        self.max = self.root
-        self._size = 0
-        self._balanced_nodes = 0
+        self.root: AVLNode = VirtualAVLNode.get_create_instance()
+        self.max: AVLNode = self.root
+        self._size: int = 0
+        self._balanced_nodes: int = 0
 
-    """searches for a node in the dictionary corresponding to the key
-
-	@type key: int
-	@param key: a key to be searched
-	@rtype: AVLNode
-	@returns: node corresponding to key
-	"""
-
-    def search(self, key):
+    # --- Search Methods ---
+    def search(self, key: int) -> Optional[AVLNode]:
         node = self.root
         while node.is_real_node():
             if key == node.key:
@@ -97,23 +98,12 @@ class AVLTree(object):
                 node = node.right
         return None
     
-    def find(self, key):
+    def find(self, key: int) -> Optional[AVLNode]:
         """Alias for search method."""
         return self.search(key)
 
-    """inserts a new node into the dictionary with corresponding key and value
-
-	@type key: int
-	@pre: key currently does not appear in the dictionary
-	@param key: key of item that is to be inserted to self
-	@type val: string
-	@param val: the value of the item
-	@param start: can be either "root" or "max"
-	@rtype: int
-	@returns: the number of rebalancing operation due to AVL rebalancing
-	"""
-
-    def insert(self, key, val, start="root"):
+    # --- Insertion Methods ---
+    def insert(self, key: int, val: str, start: str = "root") -> int:
         # Handle empty tree case
         if not self.root.is_real_node():
             self.create_root(key, val)
@@ -156,21 +146,14 @@ class AVLTree(object):
         self._balanced_nodes += 1
         return self.rebalance_after_change(new_node)
 
-    def create_root(self, key, val):
+    def create_root(self, key: int, val: str) -> None:
         self.root = AVLNode(key, val)
         self.max = self.root
         self._size = 1
         self._balanced_nodes = 1
 
-    """deletes node from the dictionary
-
-	@type node: AVLNode
-	@pre: node is a real pointer to a node in self
-	@rtype: int
-	@returns: the number of rebalancing operation due to AVL rebalancing
-	"""
-
-    def delete(self, node):
+    # --- Deletion Methods ---
+    def delete(self, node: Optional[AVLNode]) -> int:
         if node is None or not node.is_real_node():
             return 0
 
@@ -197,14 +180,14 @@ class AVLTree(object):
 
         return rebalance_count
 
-    def get_least_none_child(self, node):
+    def get_least_none_child(self, node: AVLNode) -> AVLNode:
         child = node.left if node.left.is_real_node() else node.right
         return child
 
-    def _replace_node_data_with_successor(self, node, succ):
+    def _replace_node_data_with_successor(self, node: AVLNode, succ: AVLNode) -> None:
         node.key, node.value = succ.key, succ.value
 
-    def _update_max_on_delete(self):
+    def _update_max_on_delete(self) -> None:
         if self.max.left.is_real_node():
             self.max = self.max.left
         elif self.max.parent is not None:
@@ -212,53 +195,33 @@ class AVLTree(object):
         else:
             self.max = VirtualAVLNode.get_create_instance()
 
-    """returns an array representing dictionary 
-
-	@rtype: list
-	@returns: a sorted list according to key of touples (key, value) representing the data structure
-	"""
-
-    def avl_to_array(self):
-        result = []
-        self.inorder_collect(self.root, result )
+    # --- Traversal Methods ---
+    def avl_to_array(self) -> List[Tuple[int, str]]:
+        result: List[Tuple[int, str]] = []
+        self.inorder_collect(self.root, result)
         return result
 
-
-    def inorder_collect(self, node, result):
+    def inorder_collect(self, node: Optional[AVLNode], result: List[Tuple[int, str]]) -> None:
         if node is None or not node.is_real_node():
             return
         self.inorder_collect(node.left, result)
         result.append((node.key, node.value))
         self.inorder_collect(node.right, result)
 
-    """returns the number of items in dictionary 
-
-	@rtype: int
-	@returns: the number of items in dictionary 
-	"""
-
-    def size(self):
+    # --- Size/Root/Balance Methods ---
+    def size(self) -> int:
         return self._size
 
-    """returns the root of the tree representing the dictionary
-
-	@rtype: AVLNode
-	@returns: the root, None if the dictionary is empty
-	"""
-
-    def get_root(self):
+    def get_root(self) -> Optional[AVLNode]:
         if self.root.is_real_node():
             return self.root
         return None
 
-    """gets amir's suggestion of balance factor
-	@returns: the number of nodes which have balance factor equals to 0 devided by the total number of nodes
-	"""
-
-    def get_amir_balance_factor(self):
+    def get_amir_balance_factor(self) -> float:
         return self._balanced_nodes / self._size if self._size > 0 else 0
 
-    def rebalance_after_change(self, changed_node):
+    # --- Rebalancing Methods ---
+    def rebalance_after_change(self, changed_node: AVLNode) -> int:
         rebalance_count = 0
         node = changed_node.parent
         while node is not None:
@@ -275,9 +238,8 @@ class AVLTree(object):
             node = node.parent
         return rebalance_count
 
-    def update_node_data(self, node):
+    def update_node_data(self, node: AVLNode) -> None:
         node.height = 1 + max(node.left.height, node.right.height)
-
         new_is_balanced = (node.left.height == node.right.height)
         if new_is_balanced != node.is_balanced:
             if new_is_balanced:
@@ -286,7 +248,7 @@ class AVLTree(object):
                 self._balanced_nodes -= 1
         node.is_balanced = new_is_balanced
 
-    def rebalance_node(self, node):
+    def rebalance_node(self, node: AVLNode) -> int:
         rebalance_count = 0
         if self.get_balance(node) > 1:
             if self.get_balance(node.left) < 0:
@@ -300,7 +262,7 @@ class AVLTree(object):
             self.rotate_left(node)
         return rebalance_count + 1
 
-    def rotate_left(self, x):
+    def rotate_left(self, x: AVLNode) -> None:
         y = x.right
         x.right = y.left
         if y.left.is_real_node():
@@ -318,7 +280,7 @@ class AVLTree(object):
         self.update_node_data(x)
         self.update_node_data(y)
 
-    def rotate_right(self, y):
+    def rotate_right(self, y: AVLNode) -> None:
         x = y.left
         y.left = x.right
         if x.right.is_real_node():
@@ -336,7 +298,7 @@ class AVLTree(object):
         self.update_node_data(y)
         self.update_node_data(x)
 
-    def switch_node_with(self, node, child):
+    def switch_node_with(self, node: AVLNode, child: AVLNode) -> None:
         if node.parent is None:
             self.root = child
             child.parent = None
@@ -347,13 +309,17 @@ class AVLTree(object):
                 node.parent.right = child
             child.parent = node.parent
 
-    def get_max_node(self):
+    def get_max_node(self) -> AVLNode:
         return self.max
     
-    def get_balance(self, node :AVLNode):
+    def get_balance(self, node: AVLNode) -> int:
         return node.get_bf()
     
-    def _get_balance(self, node: AVLNode):
+    def _get_balance(self, node: AVLNode) -> int:
         return node.get_bf()
+
+# =============================
+# End of AVL Tree Implementation
+# =============================
 
 
