@@ -20,8 +20,8 @@ class AVLNode(object):
         self.key = key
         self.value = value
         self.parent = None
-        self.left = None if isVirtual else VirtualAVLNode.instance()
-        self.right = None if isVirtual else VirtualAVLNode.instance()
+        self.left = None if isVirtual else VirtualAVLNode.get_create_instance()
+        self.right = None if isVirtual else VirtualAVLNode.get_create_instance()
         self.height = 0 if not isVirtual else -1
         self.is_balanced = True if not isVirtual else False
 
@@ -42,7 +42,7 @@ class VirtualAVLNode(AVLNode):
 
 
     @staticmethod
-    def instance():
+    def get_create_instance():
         if VirtualAVLNode.singleton_object is None:
             VirtualAVLNode.singleton_object = VirtualAVLNode()
         return VirtualAVLNode.singleton_object
@@ -73,7 +73,7 @@ class AVLTree(object):
 	"""
 
     def __init__(self):
-        self.root = VirtualAVLNode.instance()
+        self.root = VirtualAVLNode.get_create_instance()
         self.max = self.root
         self._size = 0
         self._balanced_nodes = 0
@@ -192,7 +192,7 @@ class AVLTree(object):
         rebalance_count = self.rebalance_after_change(child)
 
         if self._size == 0:
-            self.root = VirtualAVLNode.instance()
+            self.root = VirtualAVLNode.get_create_instance()
             self.max = self.root
 
         return rebalance_count
@@ -210,7 +210,7 @@ class AVLTree(object):
         elif self.max.parent is not None:
             self.max = self.max.parent
         else:
-            self.max = VirtualAVLNode.instance()
+            self.max = VirtualAVLNode.get_create_instance()
 
     """returns an array representing dictionary 
 
