@@ -6,6 +6,7 @@ from avl_tree import AVLTree
 import time
 import matplotlib.pyplot as plt
 import datetime
+import pandas as pd
 
 def generate_permutation(n, k):
     """Generate a permutation of size n with exactly k inversions."""
@@ -91,7 +92,7 @@ def plot_results(ks, times_max, n):
     plt.plot(xs_filtered, times_max_filtered, marker='o', linestyle='-')
     plt.xlabel('Number of Inversions (millions)')
     plt.ylabel('Insertion Time (seconds)')
-    plt.title(f'AVL Insert Time vs Number of Inversions (n={n}, 50 samples, start="max")')
+    plt.title(f'AVL Insert Time  (from max) vs Number Of inversions (n={n})')
     plt.grid(True)
     plt.tight_layout()
     out_dir = os.path.dirname(__file__)
@@ -99,6 +100,14 @@ def plot_results(ks, times_max, n):
     out_path = os.path.join(out_dir, f'avl_insert_time_vs_inversions_{date_str}.png')
     plt.savefig(out_path)
     print(f"Saved graph: {out_path}")
+    # Save results to Excel
+    df = pd.DataFrame({
+        'Inversions (millions)': xs_filtered,
+        'Insertion Time (seconds)': times_max_filtered
+    })
+    excel_path = os.path.join(out_dir, f'avl_insert_time_vs_inversions_{date_str}.xlsx')
+    df.to_excel(excel_path, index=False)
+    print(f"Saved Excel: {excel_path}")
     # plt.show()  # Optionally, comment this out if you only want to save
 
 def main():
