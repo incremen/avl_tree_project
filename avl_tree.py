@@ -393,7 +393,9 @@ class AVLTree(object):
 
         @returns: the number of nodes which have balance factor equals to 0 divided by the total number of nodes
         """
-        return None
+        if self.node_count == 0:
+            return 0
+        return self.total_zero_balance_nodes / self.node_count 
 
     def size(self):
         """returns the number of items in dictionary 
