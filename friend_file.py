@@ -39,6 +39,9 @@ class AVLNode(object):
             return "#"
 
         return f"({self.key}, {self.value})"
+    
+    def get_bf(self):
+        return self.left.height - self.right.height
 
 
 class AVLNodeVirtual(AVLNode):
@@ -326,6 +329,12 @@ class AVLTree(object):
             else:
                 node.parent.right = child
             child.parent = node.parent
+
+    def _get_balance(self, node):
+        return node.get_bf()
+
+    def get_max_node(self):
+        return self.max
 
 
 if __name__ == "__main__":
