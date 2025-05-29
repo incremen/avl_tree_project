@@ -263,7 +263,7 @@ class AVLTree(object):
         node = changed_node.parent
         while node is not None:
             old_height = node.height
-            self.update_node_fields(node)
+            self.update_node_data(node)
             balance = self.get_balance(node)
             if abs(balance) > 1:
                 rebalance_count += self.rebalance_node(node)
@@ -275,7 +275,7 @@ class AVLTree(object):
             node = node.parent
         return rebalance_count
 
-    def update_node_fields(self, node):
+    def update_node_data(self, node):
         node.height = 1 + max(node.left.height, node.right.height)
 
         new_is_balanced = (node.left.height == node.right.height)
@@ -315,8 +315,8 @@ class AVLTree(object):
                 x.parent.right = y
         y.left = x
         x.parent = y
-        self.update_node_fields(x)
-        self.update_node_fields(y)
+        self.update_node_data(x)
+        self.update_node_data(y)
 
     def rotate_right(self, y):
         x = y.left
@@ -333,8 +333,8 @@ class AVLTree(object):
                 y.parent.right = x
         x.right = y
         y.parent = x
-        self.update_node_fields(y)
-        self.update_node_fields(x)
+        self.update_node_data(y)
+        self.update_node_data(x)
 
     def switch_node_with(self, node, child):
         if node.parent is None:
